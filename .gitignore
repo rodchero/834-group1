@@ -1,3 +1,8 @@
 /input/
 /output/
 /.DS_Store/
+/firefox/
+/data/
+/commits_filtered.jsonl/
+/commits_raw.jsonl/
+/ReplicationPackageScript/.DS_Store/
