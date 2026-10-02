@@ -35,4 +35,4 @@ for name, test in FUNNEL:
 with open(OUT, "w", encoding="utf-8") as f:
     f.writelines(json.dumps(c, ensure_ascii=False) + "\n" for c in kept)
  
-print(f"\n{len(kept)} commits -> {OUT}")
+
