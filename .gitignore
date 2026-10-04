@@ -1,11 +1,11 @@
 /input/
 /output/
-/.DS_Store
+*.DS_Store
 /firefox/
 /data/
 /commits_filtered.jsonl
 /commits_raw.jsonl
 /bugzilla_missing_ids.txt
 /bugzilla_matched.jsonl
-/ReplicationPackageScript/.DS_Store/
+/commits_features.csv
 /.vscode/
