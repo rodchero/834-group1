@@ -1,6 +1,6 @@
 /input/
 /output/
-/.DS_Store/
+/.DS_Store
 /firefox/
 /data/
 /commits_filtered.jsonl
