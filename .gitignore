@@ -3,8 +3,9 @@
 /.DS_Store/
 /firefox/
 /data/
-/commits_filtered.jsonl/
-/commits_raw.jsonl/
-/bugzilla_missing_ids.txt/
-/bugzilla_matched.jsonl/
+/commits_filtered.jsonl
+/commits_raw.jsonl
+/bugzilla_missing_ids.txt
+/bugzilla_matched.jsonl
 /ReplicationPackageScript/.DS_Store/
+/.vscode/
