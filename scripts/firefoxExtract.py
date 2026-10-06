@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import json
 import subprocess
 from pathlib import Path
@@ -6,16 +8,14 @@ ROOT = Path(__file__).resolve().parent.parent
 REPO = ROOT / "firefox"
 OUT = ROOT / "commits_raw.jsonl"
 
-FIELDS = ["%H", "%cI", "%ae", "%ce", "%s", "%B"]
-NAMES = ["hash", "commit_date", "author_email", "committer_email", "subject", "message"]
+FIELDS = ["%H", "%P", "%cI", "%ae", "%ce", "%s", "%B"]
+NAMES = ["hash", "parents", "commit_date", "author_email", "committer_email", "subject", "message"]
 
 
 def main():
     if not REPO.exists():
         raise FileNotFoundError(f"Firefox repo not found: {REPO}")
 
-    # now captures ALL commits; filting by date too early torpedoes the later feature calculations - I need the entire commit history for that. - Roman
-    # e.g., prior commits influences the developer experience category (rexp, sexp, exp)
     log = subprocess.run(
         [
             "git", "-C", str(REPO), "log",
@@ -45,8 +45,8 @@ def main():
             out.write(json.dumps(commit, ensure_ascii=False) + "\n")
             n += 1
 
-    print(f"{n} commits")
-    print(f"Path: {OUT}")
+    print(f"{n} commits", flush=True)
+    print(f"Path: {OUT}", flush=True)
 
     if n == 0:
         raise RuntimeError("No commits extracted from Firefox repository")

@@ -2,6 +2,7 @@
 
 import subprocess
 import sys
+import threading
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -22,90 +23,106 @@ def all_exist(files):
 
 def run(script):
     path = ROOT / script
-    print(f"\n=== Running {script} ===")
+    print(f"\n=== Running {script} ===", flush=True)
 
     result = subprocess.run(
-        [PYTHON, str(path)],
-        cwd=ROOT,
-        capture_output=True,
-        text=True
+        [PYTHON, "-u", str(path)],   # -u = unbuffered python output
+        cwd=ROOT
     )
 
-    print(f"--- {script} STDOUT ---")
-    print(result.stdout if result.stdout.strip() else "(empty)")
-    print(f"--- {script} STDERR ---")
-    print(result.stderr if result.stderr.strip() else "(empty)")
-    print(f"--- {script} Return code: {result.returncode} ---")
+    print(f"--- {script} Return code: {result.returncode} ---", flush=True)
 
     if result.returncode != 0:
         raise SystemExit(result.returncode)
 
 
+def stream_pipe(pipe, prefix, target_stream):
+    try:
+        for line in iter(pipe.readline, ''):
+            target_stream.write(f"[{prefix}] {line}")
+            target_stream.flush()
+    finally:
+        pipe.close()
+
+
 def spawn(script):
     path = ROOT / script
-    print(f"\n=== Starting {script} in parallel ===")
-    return subprocess.Popen(
-        [PYTHON, str(path)],
+    print(f"\n=== Starting {script} in parallel ===", flush=True)
+
+    proc = subprocess.Popen(
+        [PYTHON, "-u", str(path)],   # unbuffered child output
         cwd=ROOT,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        text=True
+        text=True,
+        bufsize=1  # line-buffered
     )
 
+    t_out = threading.Thread(
+        target=stream_pipe,
+        args=(proc.stdout, Path(script).name, sys.stdout),
+        daemon=True
+    )
+    t_err = threading.Thread(
+        target=stream_pipe,
+        args=(proc.stderr, Path(script).name + " STDERR", sys.stderr),
+        daemon=True
+    )
 
-def wait_process(name, proc):
-    stdout, stderr = proc.communicate()
+    t_out.start()
+    t_err.start()
 
-    print(f"--- {name} STDOUT ---")
-    print(stdout if stdout.strip() else "(empty)")
-    print(f"--- {name} STDERR ---")
-    print(stderr if stderr.strip() else "(empty)")
-    print(f"--- {name} Return code: {proc.returncode} ---")
+    return proc, t_out, t_err
 
-    if proc.returncode != 0:
-        raise SystemExit(proc.returncode)
+
+def wait_process(name, proc, t_out, t_err):
+    rc = proc.wait()
+    t_out.join()
+    t_err.join()
+
+    print(f"--- {name} Return code: {rc} ---", flush=True)
+
+    if rc != 0:
+        raise SystemExit(rc)
 
 
 def main():
     # Step 1: extract all commits
     script, outputs = STEP_EXTRACT
     if all_exist(outputs):
-        print(f"Skipping {script}, outputs exist")
+        print(f"Skipping {script}, outputs exist", flush=True)
     else:
         run(script)
 
     # Step 2: filter target dataset
     script, outputs = STEP_FILTER
     if all_exist(outputs):
-        print(f"Skipping {script}, outputs exist")
+        print(f"Skipping {script}, outputs exist", flush=True)
     else:
         run(script)
 
-    # Step 3 + 4 in parallel:
-    # - Bugzilla fetch depends on filtered commits
-    # - Feature extraction depends on raw + filtered commits
+    # Step 3 + 4 in parallel
     bugzilla_script, bugzilla_outputs = STEP_BUGZILLA
     features_script, features_outputs = STEP_FEATURES
 
-    bugzilla_done = all_exist(bugzilla_outputs)
-    features_done = all_exist(features_outputs)
+    jobs = []
 
-    procs = []
-
-    if bugzilla_done:
-        print(f"Skipping {bugzilla_script}, outputs exist")
+    if all_exist(bugzilla_outputs):
+        print(f"Skipping {bugzilla_script}, outputs exist", flush=True)
     else:
-        procs.append((bugzilla_script, spawn(bugzilla_script)))
+        proc, t_out, t_err = spawn(bugzilla_script)
+        jobs.append((bugzilla_script, proc, t_out, t_err))
 
-    if features_done:
-        print(f"Skipping {features_script}, outputs exist")
+    if all_exist(features_outputs):
+        print(f"Skipping {features_script}, outputs exist", flush=True)
     else:
-        procs.append((features_script, spawn(features_script)))
+        proc, t_out, t_err = spawn(features_script)
+        jobs.append((features_script, proc, t_out, t_err))
 
-    for name, proc in procs:
-        wait_process(name, proc)
+    for name, proc, t_out, t_err in jobs:
+        wait_process(name, proc, t_out, t_err)
 
-    # Step 5: only run SZZ once both feature + bugzilla artifacts exist
+    # Step 5: run SZZ only when both prerequisites exist
     if not all_exist(bugzilla_outputs):
         raise RuntimeError("Bugzilla artifacts missing; cannot run SZZ")
     if not all_exist(features_outputs):
@@ -113,11 +130,11 @@ def main():
 
     script, outputs = STEP_SZZ
     if all_exist(outputs):
-        print(f"Skipping {script}, outputs exist")
+        print(f"Skipping {script}, outputs exist", flush=True)
     else:
         run(script)
 
-    print("\nPipeline complete.")
+    print("\nPipeline complete.", flush=True)
 
 
 if __name__ == "__main__":

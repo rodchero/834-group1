@@ -110,10 +110,10 @@ def load_commits(path):
     return commits
 
 
-def get_parent(commit_hash):
-    out = run_git(["rev-list", "--parents", "-n", "1", commit_hash]).strip().split()
-    if len(out) >= 2:
-        return out[1]
+def get_parent_from_commit(commit):
+    parents = (commit.get("parents") or "").strip().split()
+    if parents:
+        return parents[0]
     return None
 
 
@@ -224,7 +224,7 @@ def main():
             message = commit.get("message", "") or ""
 
             try:
-                parent = get_parent(commit_hash)
+                parent = get_parent_from_commit(commit)
                 numstat = parse_numstat(commit_hash)
             except subprocess.CalledProcessError as e:
                 print(f"[WARN] Skipping {commit_hash}: {e}")
@@ -319,7 +319,7 @@ def main():
                 subsystem_dev_count[(author, s)] += 1
 
             if i % 1000 == 0 or i == len(all_commits):
-                print(f"Scanned {i}/{len(all_commits)} commits, emitted {emitted} target rows")
+                print(f"Scanned {i}/{len(all_commits)} commits, emitted {emitted} target rows", flush=True)
 
     if OUT.stat().st_size == 0:
         raise RuntimeError("Feature extraction produced an empty file")
