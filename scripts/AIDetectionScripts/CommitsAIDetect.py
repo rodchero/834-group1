@@ -68,16 +68,17 @@ def load_bugs(path):
     return bugs
 
 
-def prelabel(kind, comp, whiteboard):
+def prelabel(kind, comp, whiteboard, ctx):
     # hopefully speeds up review process
     if kind == "agent-authored":
         return "AGENT_AUTHORED"
     if "[genai]" in whiteboard.lower() or FEAUTERS.search(comp):
         return "FP_FEATURE?"
+    if NOISE_CONTEXT.search(ctx):      
+        return "FP_NOISE?"
     if TOOLS.search(comp):
         return "FP_TOOLING?"
     return ""
-
 
 def matched_lines(msg, rx):
     # pulls out the first two lines that match the regex for context when reviewing
