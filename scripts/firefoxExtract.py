@@ -1,31 +1,56 @@
-# Dump Firefox commits in a date window to JSONL, one commit per line.
-import json, subprocess, sys
+import json
+import subprocess
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+REPO = ROOT / "firefox"
+OUT = ROOT / "commits_raw.jsonl"
 
 FIELDS = ["%H", "%cI", "%ae", "%ce", "%s", "%B"]
-NAMES = ["hash", "commit_date", "author_email", "committer_email",
-         "subject", "message"] # using the committer date
-OUT = "commits_raw.jsonl"
+NAMES = ["hash", "commit_date", "author_email", "committer_email", "subject", "message"]
 
 
-log = subprocess.run(
-    ["git", "-C", "firefox", "log",
-     "--no-merges",                 #ignoring merge commits, they have no changes of their own
-     "--since=2024-11-01",             
-     "--until=2025-11-01",
-     "--pretty=format:\x1e" + "\x1f".join(FIELDS)], #commits start with \x1e, fields separated by \x1f
-    capture_output=True, text=True, encoding="utf-8", errors="replace")
+def main():
+    if not REPO.exists():
+        raise FileNotFoundError(f"Firefox repo not found: {REPO}")
 
-n = 0
-with open(OUT, "w", encoding="utf-8") as out:
-    for chunk in log.stdout.split("\x1e"):
-        if not chunk.strip():    
-            continue
-        
-        commit = dict(zip(NAMES, chunk.split("\x1f")))
-        commit["message"] = commit["message"].strip()
+    # now captures ALL commits; filting by date too early torpedoes the later feature calculations - I need the entire commit history for that. - Roman
+    # e.g., prior commits influences the developer experience category (rexp, sexp, exp)
+    log = subprocess.run(
+        [
+            "git", "-C", str(REPO), "log",
+            "--no-merges",
+            "--pretty=format:\x1e" + "\x1f".join(FIELDS),
+        ],
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        check=True,
+    )
 
-        out.write(json.dumps(commit, ensure_ascii=False) + "\n")
-        n += 1
+    n = 0
+    with open(OUT, "w", encoding="utf-8") as out:
+        for chunk in log.stdout.split("\x1e"):
+            if not chunk.strip():
+                continue
 
-print(n, "commits")
-print("Path: ", OUT)
+            parts = chunk.split("\x1f")
+            if len(parts) != len(NAMES):
+                continue
+
+            commit = dict(zip(NAMES, parts))
+            commit["message"] = commit["message"].strip()
+
+            out.write(json.dumps(commit, ensure_ascii=False) + "\n")
+            n += 1
+
+    print(f"{n} commits")
+    print(f"Path: {OUT}")
+
+    if n == 0:
+        raise RuntimeError("No commits extracted from Firefox repository")
+
+
+if __name__ == "__main__":
+    main()

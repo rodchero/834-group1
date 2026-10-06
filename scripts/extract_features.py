@@ -11,7 +11,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 REPO = ROOT / "firefox"
 
-COMMITS_IN = ROOT / "commits_filtered.jsonl"
+RAW_COMMITS_IN = ROOT / "commits_raw.jsonl"
+TARGET_COMMITS_IN = ROOT / "commits_filtered.jsonl"
 OUT = ROOT / "commits_features.csv"
 
 FIELDNAMES = [
@@ -51,7 +52,6 @@ def parse_iso8601(s):
 
 
 def format_commitdate(dt):
-    # Match original style more closely: 2006/8/28 11:24
     return f"{dt.year}/{dt.month}/{dt.day} {dt.hour}:{dt.minute:02d}"
 
 
@@ -168,8 +168,6 @@ def count_lines_in_parent(parent_hash, path):
 
 
 def normalize_features(la_raw, ld_raw, lt_raw, nf, npt_raw, entropy):
-    # Match predUtils.r / original dataset style
-    # paper section 4.4
     if lt_raw >= 1:
         la = la_raw / lt_raw
         ld = ld_raw / lt_raw
@@ -184,32 +182,41 @@ def normalize_features(la_raw, ld_raw, lt_raw, nf, npt_raw, entropy):
         lt = lt_raw
         npt = npt_raw
 
-    # entropy is already normalized by log2(nf) in normalized_entropy()
     return la, ld, lt, npt, entropy
 
 
 def main():
     if not REPO.exists():
         raise FileNotFoundError(f"Firefox repo not found: {REPO}")
+    if not RAW_COMMITS_IN.exists():
+        raise FileNotFoundError(f"Missing input file: {RAW_COMMITS_IN}")
+    if not TARGET_COMMITS_IN.exists():
+        raise FileNotFoundError(f"Missing input file: {TARGET_COMMITS_IN}")
 
-    if not COMMITS_IN.exists():
-        raise FileNotFoundError(f"Missing input file: {COMMITS_IN}")
+    all_commits = load_commits(RAW_COMMITS_IN)
+    target_commits = load_commits(TARGET_COMMITS_IN)
 
-    commits = load_commits(COMMITS_IN)
-    if not commits:
+    if not all_commits:
+        raise RuntimeError("No commits found in commits_raw.jsonl")
+    if not target_commits:
         raise RuntimeError("No commits found in commits_filtered.jsonl")
 
+    target_hashes = {c["hash"] for c in target_commits}
+
+    # Historical state built from ALL commits
     file_developers = defaultdict(set)
     file_change_count = defaultdict(int)
     file_dev_change_count = defaultdict(int)
     dev_prior_commit_dates = defaultdict(list)
     subsystem_dev_count = defaultdict(int)
 
+    emitted = 0
+
     with open(OUT, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
         writer.writeheader()
 
-        for i, commit in enumerate(commits, start=1):
+        for i, commit in enumerate(all_commits, start=1):
             commit_hash = commit["hash"]
             commit_date = commit["_dt"]
             author = (commit.get("author_email") or "").strip().lower()
@@ -236,66 +243,71 @@ def main():
             subsystems = {subsystem_of(path) for path in files if path}
             directories = {directory_of(path) for path in files if path}
 
-            ns = len(subsystems)
-            nm = len(directories)
-            nf = len(files)
+            # Emit feature row only for target commits,
+            # but compute using history from ALL previous commits.
+            if commit_hash in target_hashes:
+                ns = len(subsystems)
+                nm = len(directories)
+                nf = len(files)
 
-            la_raw = sum(a for a, _, _ in numstat)
-            ld_raw = sum(d for _, d, _ in numstat)
-            lt_raw = sum(count_lines_in_parent(parent, path) for _, _, path in numstat)
+                la_raw = sum(a for a, _, _ in numstat)
+                ld_raw = sum(d for _, d, _ in numstat)
+                lt_raw = sum(count_lines_in_parent(parent, path) for _, _, path in numstat)
 
-            churns = [a + d for a, d, _ in numstat]
-            entropy = normalized_entropy(churns)
+                churns = [a + d for a, d, _ in numstat]
+                entropy = normalized_entropy(churns)
 
-            fix = fix_heuristic(subject, message)
+                fix = fix_heuristic(subject, message)
 
-            prior_devs = set()
-            prior_changes_per_file = []
-            prior_author_changes_per_file = []
+                prior_devs = set()
+                prior_changes_per_file = []
+                prior_author_changes_per_file = []
 
-            for _, _, path in numstat:
-                prior_devs.update(file_developers[path])
-                prior_changes_per_file.append(file_change_count[path])
-                prior_author_changes_per_file.append(file_dev_change_count[(path, author)])
+                for _, _, path in numstat:
+                    prior_devs.update(file_developers[path])
+                    prior_changes_per_file.append(file_change_count[path])
+                    prior_author_changes_per_file.append(file_dev_change_count[(path, author)])
 
-            ndev = len(prior_devs)
-            pd = sum(prior_changes_per_file) if prior_changes_per_file else 0
-            npt_raw = sum(prior_author_changes_per_file)
+                ndev = len(prior_devs)
+                pd = sum(prior_changes_per_file) if prior_changes_per_file else 0
+                npt_raw = sum(prior_author_changes_per_file)
 
-            exp = len(dev_prior_commit_dates[author])
+                exp = len(dev_prior_commit_dates[author])
 
-            rexp = 0.0
-            for prior_dt in dev_prior_commit_dates[author]:
-                n = years_old(prior_dt, commit_date)
-                rexp += 1.0 / (n + 1)
+                rexp = 0.0
+                for prior_dt in dev_prior_commit_dates[author]:
+                    n = years_old(prior_dt, commit_date)
+                    rexp += 1.0 / (n + 1)
 
-            sexp = sum(subsystem_dev_count[(author, s)] for s in subsystems)
+                sexp = sum(subsystem_dev_count[(author, s)] for s in subsystems)
 
-            la, ld, lt, npt, entropy = normalize_features(
-                la_raw, ld_raw, lt_raw, nf, npt_raw, entropy
-            )
+                la, ld, lt, npt, entropy = normalize_features(
+                    la_raw, ld_raw, lt_raw, nf, npt_raw, entropy
+                )
 
-            row = {
-                "transactionid": commit_hash,
-                "commitdate": format_commitdate(commit_date),
-                "ns": ns,
-                "nm": nm,
-                "nf": nf,
-                "entropy": entropy,
-                "la": la,
-                "ld": ld,
-                "lt": lt,
-                "fix": fix,
-                "ndev": ndev,
-                "pd": pd,
-                "npt": npt,
-                "exp": exp,
-                "rexp": rexp,
-                "sexp": sexp,
-            }
+                row = {
+                    "transactionid": commit_hash,
+                    "commitdate": format_commitdate(commit_date),
+                    "ns": ns,
+                    "nm": nm,
+                    "nf": nf,
+                    "entropy": entropy,
+                    "la": la,
+                    "ld": ld,
+                    "lt": lt,
+                    "fix": fix,
+                    "ndev": ndev,
+                    "pd": pd,
+                    "npt": npt,
+                    "exp": exp,
+                    "rexp": rexp,
+                    "sexp": sexp,
+                }
 
-            writer.writerow(row)
+                writer.writerow(row)
+                emitted += 1
 
+            # Update history state for ALL commits after computing current row
             for _, _, path in numstat:
                 file_developers[path].add(author)
                 file_change_count[path] += 1
@@ -306,13 +318,14 @@ def main():
             for s in subsystems:
                 subsystem_dev_count[(author, s)] += 1
 
-            if i % 250 == 0 or i == len(commits):
-                print(f"Processed {i}/{len(commits)} commits")
+            if i % 1000 == 0 or i == len(all_commits):
+                print(f"Scanned {i}/{len(all_commits)} commits, emitted {emitted} target rows")
 
     if OUT.stat().st_size == 0:
         raise RuntimeError("Feature extraction produced an empty file")
 
     print(f"Wrote feature dataset to: {OUT}")
+    print(f"Emitted {emitted} target commits")
 
 
 if __name__ == "__main__":
