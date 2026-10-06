@@ -132,6 +132,7 @@ for window, (path, bugs_path) in WINDOWS.items():
         for m in rx.finditer(msg):
             terms.add(m.group(0).lower())
         terms = sorted(terms)
+        ctx = matched_lines(msg, rx)
 
         rows.append({
             "hash": c["hash"][:12],
@@ -142,9 +143,9 @@ for window, (path, bugs_path) in WINDOWS.items():
             "component": comp,
             "whiteboard": whiteboard[:60],
             "matched": "|".join(terms)[:80],
-            "context": matched_lines(msg, rx),
+            "context": ctx,
             "subject": c["subject"][:100],
-            "label": prelabel(kind, comp, whiteboard),
+            "label": prelabel(kind, comp, whiteboard, ctx),
             "rater": "",
         })
 
