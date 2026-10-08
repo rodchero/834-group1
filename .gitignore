@@ -1,11 +1,22 @@
-/input/
-/output/
-*.DS_Store
+# firefox git repo
 /firefox/
-/data/
+firefox
+
+# Dataset pipeline artifacts
+# Do not gitignore commits_numstat.jsonl
 /commits_filtered.jsonl
 /commits_raw.jsonl
 /bugzilla_missing_ids.txt
 /bugzilla_matched.jsonl
 /commits_features.csv
+
+# Local config
 /.vscode/
+*.DS_Store
+
+# Replication package IO
+/input/
+/output/
+
+# Other
+/data/
