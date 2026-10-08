@@ -6,8 +6,8 @@
 # line or further down the message can be cut off. This prints the whole thing.
 #
 # Usage, from the project root:
-#   python3 show_commit.py R0084 R0562
-#   python3 show_commit.py R0084 --repo firefox
+#   python3 ./scripts/AIDetectionScripts/show_commit.py R0084 R0562
+#   python3 ./scripts/AIDetectionScripts/show_commit.py R0084 --repo firefox
 
 
 
