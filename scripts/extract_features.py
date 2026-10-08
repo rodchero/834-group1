@@ -13,6 +13,7 @@ REPO = ROOT / "firefox"
 
 RAW_COMMITS_IN = ROOT / "commits_raw.jsonl"
 TARGET_COMMITS_IN = ROOT / "commits_filtered.jsonl"
+NUMSTAT_IN = ROOT / "commits_numstat.jsonl"
 OUT = ROOT / "commits_features.csv"
 
 FIELDNAMES = [
@@ -110,40 +111,25 @@ def load_commits(path):
     return commits
 
 
+def load_numstat_cache(path):
+    cache = {}
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            rec = json.loads(line)
+            cache[rec["hash"]] = [
+                (item["added"], item["deleted"], item["path"])
+                for item in rec["files"]
+            ]
+    return cache
+
+
 def get_parent_from_commit(commit):
     parents = (commit.get("parents") or "").strip().split()
     if parents:
         return parents[0]
     return None
-
-
-def parse_numstat(commit_hash):
-    out = run_git(["show", "--numstat", "--format=", commit_hash])
-    rows = []
-
-    for line in out.splitlines():
-        parts = line.split("\t")
-        if len(parts) != 3:
-            continue
-
-        a, d, path = parts
-
-        if a == "-" or d == "-":
-            a = 0
-            d = 0
-        else:
-            try:
-                a = int(a)
-            except ValueError:
-                a = 0
-            try:
-                d = int(d)
-            except ValueError:
-                d = 0
-
-        rows.append((a, d, path))
-
-    return rows
 
 
 _line_count_cache = {}
@@ -192,9 +178,12 @@ def main():
         raise FileNotFoundError(f"Missing input file: {RAW_COMMITS_IN}")
     if not TARGET_COMMITS_IN.exists():
         raise FileNotFoundError(f"Missing input file: {TARGET_COMMITS_IN}")
+    if not NUMSTAT_IN.exists():
+        raise FileNotFoundError(f"Missing input file: {NUMSTAT_IN}")
 
     all_commits = load_commits(RAW_COMMITS_IN)
     target_commits = load_commits(TARGET_COMMITS_IN)
+    numstat_cache = load_numstat_cache(NUMSTAT_IN)
 
     if not all_commits:
         raise RuntimeError("No commits found in commits_raw.jsonl")
@@ -203,7 +192,6 @@ def main():
 
     target_hashes = {c["hash"] for c in target_commits}
 
-    # Historical state built from ALL commits
     file_developers = defaultdict(set)
     file_change_count = defaultdict(int)
     file_dev_change_count = defaultdict(int)
@@ -222,41 +210,25 @@ def main():
             author = (commit.get("author_email") or "").strip().lower()
             subject = commit.get("subject", "") or ""
             message = commit.get("message", "") or ""
+            parent = get_parent_from_commit(commit)
 
-            try:
-                parent = get_parent_from_commit(commit)
-                numstat = parse_numstat(commit_hash)
-            except subprocess.CalledProcessError as e:
-                print(f"[WARN] Skipping {commit_hash}: {e}")
-                continue
-
-            seen_paths = set()
-            deduped = []
-            for a, d, path in numstat:
-                if path in seen_paths:
-                    continue
-                seen_paths.add(path)
-                deduped.append((a, d, path))
-            numstat = deduped
+            numstat = numstat_cache.get(commit_hash, [])
 
             files = [path for _, _, path in numstat]
             subsystems = {subsystem_of(path) for path in files if path}
             directories = {directory_of(path) for path in files if path}
 
-            # Emit feature row only for target commits,
-            # but compute using history from ALL previous commits.
+            la_raw = sum(a for a, _, _ in numstat)
+            ld_raw = sum(d for _, d, _ in numstat)
+            churns = [a + d for a, d, _ in numstat]
+
             if commit_hash in target_hashes:
                 ns = len(subsystems)
                 nm = len(directories)
                 nf = len(files)
 
-                la_raw = sum(a for a, _, _ in numstat)
-                ld_raw = sum(d for _, d, _ in numstat)
                 lt_raw = sum(count_lines_in_parent(parent, path) for _, _, path in numstat)
-
-                churns = [a + d for a, d, _ in numstat]
                 entropy = normalized_entropy(churns)
-
                 fix = fix_heuristic(subject, message)
 
                 prior_devs = set()
@@ -307,7 +279,9 @@ def main():
                 writer.writerow(row)
                 emitted += 1
 
-            # Update history state for ALL commits after computing current row
+                if emitted % 100 == 0:
+                    f.flush()
+
             for _, _, path in numstat:
                 file_developers[path].add(author)
                 file_change_count[path] += 1
@@ -319,13 +293,16 @@ def main():
                 subsystem_dev_count[(author, s)] += 1
 
             if i % 1000 == 0 or i == len(all_commits):
-                print(f"Scanned {i}/{len(all_commits)} commits, emitted {emitted} target rows", flush=True)
+                print(
+                    f"Scanned {i}/{len(all_commits)} commits, emitted {emitted} target rows",
+                    flush=True
+                )
 
     if OUT.stat().st_size == 0:
         raise RuntimeError("Feature extraction produced an empty file")
 
-    print(f"Wrote feature dataset to: {OUT}")
-    print(f"Emitted {emitted} target commits")
+    print(f"Wrote feature dataset to: {OUT}", flush=True)
+    print(f"Emitted {emitted} target commits", flush=True)
 
 
 if __name__ == "__main__":
