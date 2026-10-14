@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# Incremental: only commits in commits_raw.jsonl that are not yet in the cache
+# are processed, and their records are appended. A complete cache is a no-op.
+
 import json
 import subprocess
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -29,7 +32,8 @@ def load_commits(path):
 
 
 def parse_numstat(commit_hash):
-    out = run_git(["show", "--numstat", "--format=", commit_hash])
+    # Explicit rename detection, so output does not depend on the user's diff.renames
+    out = run_git(["show", "--numstat", "--find-renames", "--format=", commit_hash])
 
     files = []
     seen_paths = set()
@@ -84,6 +88,23 @@ def process_commit(commit):
         }
 
 
+def load_cached_hashes(path):
+    hashes = set()
+    if not path.exists():
+        return hashes
+    prefix = '{"hash": "'
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            # Records start with the hash; avoid parsing ~800 MB of JSON
+            if line.startswith(prefix):
+                hashes.add(line[len(prefix):len(prefix) + 40])
+            else:
+                hashes.add(json.loads(line)["hash"])
+    return hashes
+
+
 def main():
     if not REPO.exists():
         raise FileNotFoundError(f"Firefox repo not found: {REPO}")
@@ -94,28 +115,39 @@ def main():
     if not commits:
         raise RuntimeError("No commits found in commits_raw.jsonl")
 
-    completed = 0
+    cached = load_cached_hashes(OUT)
+    todo = [c for c in commits if c["hash"] not in cached]
+    print(f"{len(cached)} commits already cached, {len(todo)} to add", flush=True)
+    if not todo:
+        return
 
-    with open(OUT, "w", encoding="utf-8") as out:
+    completed = 0
+    failed = 0
+
+    with open(OUT, "a", encoding="utf-8") as out:
         with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
-            futures = {executor.submit(process_commit, c): c["hash"] for c in commits}
+            futures = {executor.submit(process_commit, c): c["hash"] for c in todo}
 
             for future in as_completed(futures):
                 record = future.result()
+                completed += 1
 
                 if record["error"]:
+                    # Not written, so the next run retries it
                     print(f"[WARN] Skipping {record['hash']}: {record['error']}", flush=True)
+                    failed += 1
+                else:
+                    out.write(json.dumps({
+                        "hash": record["hash"],
+                        "files": record["files"],
+                    }, ensure_ascii=False) + "\n")
 
-                out.write(json.dumps({
-                    "hash": record["hash"],
-                    "files": record["files"],
-                }, ensure_ascii=False) + "\n")
+                if completed % 500 == 0 or completed == len(todo):
+                    print(f"Cached numstat for {completed}/{len(todo)} commits", flush=True)
 
-                completed += 1
-                if completed % 500 == 0 or completed == len(commits):
-                    print(f"Cached numstat for {completed}/{len(commits)} commits", flush=True)
-
-    print(f"Wrote numstat cache to: {OUT}", flush=True)
+    print(f"Appended {completed - failed} commits to numstat cache: {OUT}", flush=True)
+    if failed:
+        print(f"[WARN] {failed} commits failed and will be retried on the next run", flush=True)
 
 
 if __name__ == "__main__":

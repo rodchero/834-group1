@@ -44,6 +44,13 @@ SELF_ADMITTED = re.compile(
     re.I)
 
 
+# Phabricator reviewer groups, e.g. "r=ai-models-reviewers" or "#ai-ml-reviewers!".
+# They name who reviewed the patch, not who wrote it, and the "ai" inside them
+# matched SELF_ADMITTED for ~1,000 commits (every labelled one was a false positive).
+# Stripped before self-admitted matching only; agent signatures are matched on the raw message.
+REVIEWER_GROUP = re.compile(r"[#\w.-]*-reviewers?\b", re.I)
+
+
 # code generation tools that are not AI. This part was suggested by Claude. should help speed up manual labeling
 NOISE_CONTEXT = re.compile(
     r"clang-tidy|clang-format|ffmpeg|bindgen|cbindgen|protoc|mach |perfdocs"
@@ -92,6 +99,7 @@ def detect(commits, bugs):
 
     for c in commits:
         msg = c["message"]
+        msg_no_reviewers = REVIEWER_GROUP.sub("", msg)
         identity = f"{c['author_email']} {c['committer_email']}"
         hits = []
         for name, rx in AGENTS.items():
@@ -99,11 +107,11 @@ def detect(commits, bugs):
                 hits.append(name)
 
         if hits:
-            kind, rx = "agent-authored", AGENTS[hits[0]]
+            kind, rx, text = "agent-authored", AGENTS[hits[0]], msg
             key = "+".join(hits)
             agents[key] = agents.get(key, 0) + 1
-        elif SELF_ADMITTED.search(msg):
-            kind, rx = "self-admitted", SELF_ADMITTED
+        elif SELF_ADMITTED.search(msg_no_reviewers):
+            kind, rx, text = "self-admitted", SELF_ADMITTED, msg_no_reviewers
         else:
             continue
 
@@ -115,10 +123,10 @@ def detect(commits, bugs):
             comp, whiteboard = "", ""
 
         terms = set()
-        for m in rx.finditer(msg):
+        for m in rx.finditer(text):
             terms.add(m.group(0).lower())
         terms = sorted(terms)
-        ctx = matched_lines(msg, rx)
+        ctx = matched_lines(text, rx)
 
         rows.append({
             "hash": c["hash"],

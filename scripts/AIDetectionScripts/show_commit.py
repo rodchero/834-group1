@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# Dump the full commit message for one or more labelling row_ids.
+# Dump the full commit message for one or more labelling row_ids (old sheets)
+# or commit hashes (labelling_todo.csv and newer sheets).
 #
 # The sheet's `context` column truncates each matching line to 120 characters
 # and shows at most 2 matching lines, so a tool mention further into a long
@@ -7,25 +8,26 @@
 #
 # Usage, from the project root:
 #   python3 ./scripts/AIDetectionScripts/show_commit.py R0084 R0562
+#   python3 ./scripts/AIDetectionScripts/show_commit.py fa9c5cdb882a
 #   python3 ./scripts/AIDetectionScripts/show_commit.py R0084 --repo firefox
 
 
 
 # This script is written by claude
 
-import argparse, csv, json, subprocess, sys
+import argparse, csv, json, re, subprocess, sys
 from pathlib import Path
 
-KEY = "labelling_key.csv"
+KEY = "scripts/AIDetectionScripts/labelling_key.csv"
 JSONL = ["artifacts/commits_filtered.jsonl", "artifacts/commits_raw.jsonl"]
 
 ap = argparse.ArgumentParser()
-ap.add_argument("row_ids", nargs="+", help="e.g. R0084 R0562")
+ap.add_argument("row_ids", nargs="+", help="row ids or commit hashes, e.g. R0084 fa9c5cdb882a")
 ap.add_argument("--repo", default="firefox", help="path to the clone")
 args = ap.parse_args()
 
 if not Path(KEY).exists():
-    sys.exit(f"{KEY} not found -- run this from the directory holding it")
+    sys.exit(f"{KEY} not found -- run this from the project root")
 
 key = {r["row_id"]: r for r in csv.DictReader(open(KEY, encoding="utf-8"))}
 
@@ -40,8 +42,10 @@ for path in JSONL:
 
 for rid in args.row_ids:
     row = key.get(rid)
+    if not row and re.fullmatch(r"[0-9a-fA-F]{7,40}", rid):
+        row = {"hash": rid[:12].lower(), "window": "", "kind": "", "agent": "", "pretag": ""}
     if not row:
-        print(f"\n{rid}: not in {KEY}")
+        print(f"\n{rid}: not in {KEY} and not a commit hash")
         continue
 
     short = row["hash"]

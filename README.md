@@ -12,7 +12,6 @@ Replication of Kamei et al., "A Large-Scale Empirical Study of Just-in-Time Qual
 | `scripts/AIDetectionScripts/` | AI-disclosure detection, manual labelling sheets and helpers |
 | `artifacts/` | Pipeline outputs. Gitignored except `commits_numstat.jsonl` (git lfs) |
 | `ReplicationPackageScript/` | R scripts from the paper's replication package (RQ1–RQ3 models) |
-| `labelling_key.csv` | Maps labelling-sheet `row_id`s to commit hashes |
 | `firefox/` | Local clone of the Firefox repo (not tracked, see Setup) |
 
 ## Setup
@@ -43,17 +42,18 @@ Replication of Kamei et al., "A Large-Scale Empirical Study of Just-in-Time Qual
 python main.py
 ```
 
-Stages run in order. A stage is skipped when all of its outputs already exist in `artifacts/`, so delete an artifact to regenerate it and everything that depends on it. Each stage's runtime is printed, with a summary at the end. The Bugzilla stage takes a while, because requests are throttled on purpose.
+Stages run in order. A stage is skipped when all of its outputs already exist in `artifacts/`, so delete an artifact to regenerate it and everything that depends on it. The numstat cache and label merge stages always run (they are incremental or cheap). Each stage's runtime is printed, with a summary at the end. The Bugzilla stage takes a while, because requests are throttled on purpose.
 
 | # | Stage | Output (`artifacts/`) | What it does |
 |---|---|---|---|
 | 1 | `scripts/firefoxExtract.py` | `commits_raw.jsonl` | All non-merge commits from the clone |
-| 2 | `scripts/cache_numstat.py` | `commits_numstat.jsonl` | Per-file added/deleted lines per commit (tracked in git lfs, normally skipped) |
+| 2 | `scripts/cache_numstat.py` | `commits_numstat.jsonl` | Per-file added/deleted lines per commit (tracked in git lfs). Incremental: only appends commits missing from the cache |
 | 3 | `scripts/filterCommits.py` | `commits_filtered.jsonl`, `commits_fix_candidates.jsonl` | Keeps commits inside a study window, tags each with `window` (`human`/`ai`), removes WPT imports, backouts, vendored code and commits without a bug ID. Also writes SZZ fix candidates: the same filters from the earliest window start with no end date, so fixes landing after a window are still traced |
 | 4 | `scripts/getBugzillaList.py` | `bugzilla_matched.jsonl`, `bugzilla_missing_ids.txt` | Fetches every Bugzilla bug referenced by the filtered commits and fix candidates |
-| 5 | `scripts/AIDetectionScripts/CommitsAIDetect.py` | `ai_candidates.csv` | Flags agent-signed and self-admitted AI commits for labelling |
-| 6 | `scripts/extract_features.py` | `commits_features.csv` | Kamei change metrics for every filtered commit (column names follow the replication package) |
-| 7 | `scripts/run_szz.py` | `final_dataset.csv`, `szz_report.json` | SZZ labelling of defect-inducing commits; the report counts every exclusion |
+| 5 | `scripts/AIDetectionScripts/CommitsAIDetect.py` | `ai_candidates.csv` | Flags agent-signed and self-admitted AI commits for labelling (Phabricator reviewer groups such as `r=ai-models-reviewers` are ignored) |
+| 6 | `scripts/AIDetectionScripts/merge_labels.py` | `ai_labels.csv`, `labelling_todo.csv`, `label_disagreements.csv` | Merges the raters' sheets by commit hash, prints Cohen's κ, lists rows still needing labels and unresolved disagreements |
+| 7 | `scripts/extract_features.py` | `commits_features.csv` | Kamei change metrics for every filtered commit (column names follow the replication package). File history follows renames |
+| 8 | `scripts/run_szz.py` | `final_dataset.csv`, `szz_report.json` | SZZ labelling of defect-inducing commits; the report counts every exclusion |
 
 Study windows and other parameters are set in `config.py`. Stage scripts import it as a top-level module, so to run a single stage, run it as a module from the project root:
 
@@ -63,14 +63,28 @@ python -m scripts.filterCommits
 
 ## AI-disclosure labelling (WIP)
 
-The self-admitted candidates from stage 5 are labelled by hand (see `scripts/AIDetectionScripts/LABELLING_INSTRUCTIONS.md`). To print the full message of a labelling row, run this from the project root:
+The self-admitted candidates from stage 5 are labelled by hand by two raters; see `scripts/AIDetectionScripts/LABELLING_INSTRUCTIONS.md` for the labels and how to submit a sheet. Rater sheets are `scripts/AIDetectionScripts/labelling_sheet_<rater>[_<batch>].csv`, and third-person decisions on disagreements go in `resolved_labels.csv` next to them. Re-run the merge after adding a sheet:
 
 ```
-python scripts/AIDetectionScripts/show_commit.py R0084 R0562
+python -m scripts.AIDetectionScripts.merge_labels
 ```
 
-Still to come: merging the two raters' labels and computing Cohen's κ, tagging AI exposure per developer (`tag_exposure.py`), and building the final per-dataset CSVs in the replication package's input format.
+To print the full message of a row, by old row id or by commit hash:
+
+```
+python scripts/AIDetectionScripts/show_commit.py R0084 fa9c5cdb882a
+```
+
+Still to come: tagging AI exposure per developer (`tag_exposure.py`), and building the final per-dataset CSVs in the replication package's input format.
 
 ## Replication package
 
 The R scripts in `ReplicationPackageScript/` need R and the `MASS` package (`install.packages("MASS")`). See `ReplicationPackageScript/ReadMe.txt` for how to run them.
+
+# TODO
+- finish AI labelling
+- choose products/components for the 10 sub-datasets
+- make a "build_datasets.py" script
+- automate replication package runner (could also be a python script)
+
+

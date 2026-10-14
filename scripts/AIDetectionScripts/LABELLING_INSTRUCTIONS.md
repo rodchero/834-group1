@@ -61,9 +61,33 @@ Examples:
 - **When torn between two false-positive categories**, pick either — all FP
   labels are collapsed to "not AI" in the analysis. Don't stress.
 
-## When you're done
+## When you're done (first batch, `labelling_sheet.csv`)
 
 Send your filled copy back.
 Don't reorder
 or delete rows. Expect this to take 1.5 hours or so; most rows are obvious once you
 read the `context` line.
+
+## Batch 2 onwards: `labelling_todo.csv`
+
+Rows are now matched by commit **hash**, so they survive the candidate list being
+regenerated. The label vocabulary above is unchanged.
+
+1. Get the to-do sheet. From the project root, with the pipeline artifacts up to
+   date, run `python -m scripts.AIDetectionScripts.merge_labels`. It writes
+   `artifacts/labelling_todo.csv`: every self-admitted candidate with fewer than two labels.
+2. Copy it to `scripts/AIDetectionScripts/labelling_sheet_<INITIALS>_batch2.csv`.
+   Use the same initials every time (rater T stays `T`), since the initials are how
+   your labels are told apart from the other rater's.
+3. Skip rows whose `labelled_by` column already contains your initials; you labelled
+   those before. `labelled_by` only says who labelled a row, never what they chose.
+4. Fill `label` (and `notes` if useful). Don't edit `hash`. Rows left blank are
+   simply not counted, so it's fine to stop and continue later.
+5. Full message for a row: `python scripts/AIDetectionScripts/show_commit.py <hash>`.
+6. Commit your sheet. Re-running `merge_labels` prints Cohen's kappa and writes
+   `artifacts/label_disagreements.csv`.
+
+**Resolving disagreements (third person):** fill the `label` column of
+`label_disagreements.csv` and save it as `scripts/AIDetectionScripts/resolved_labels.csv`
+(only the `hash` and `label` columns are read). Re-run `merge_labels`; done when it
+reports 0 unlabelled and 0 unresolved.

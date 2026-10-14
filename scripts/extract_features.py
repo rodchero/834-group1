@@ -3,6 +3,7 @@
 import csv
 import json
 import math
+import re
 import subprocess
 from collections import defaultdict
 from datetime import datetime, timezone
@@ -34,6 +35,11 @@ FIELDNAMES = [
     "rexp",
     "sexp",
 ]
+
+# git numstat reports renames as "dir/{old => new}/file" or, with no common
+# prefix/suffix, as "old => new".
+RENAME_BRACES_RE = re.compile(r"^(.*)\{(.*) => (.*)\}(.*)$")
+
 
 def run_git(args):
     result = subprocess.run(
@@ -104,7 +110,22 @@ def load_commits(path):
     return commits
 
 
+def split_rename(path):
+    """Returns (old_path, new_path); both equal path when it is not a rename."""
+    m = RENAME_BRACES_RE.match(path)
+    if m:
+        prefix, old, new, suffix = m.groups()
+        # "{dir => }" leaves an empty segment behind, e.g. "a//b"
+        join = lambda mid: (prefix + mid + suffix).replace("//", "/").lstrip("/")
+        return join(old), join(new)
+    if " => " in path:
+        old, new = path.split(" => ", 1)
+        return old, new
+    return path, path
+
+
 def load_numstat_cache(path):
+    """hash -> [(added, deleted, old_path, new_path)]"""
     cache = {}
     with open(path, encoding="utf-8") as f:
         for line in f:
@@ -112,7 +133,7 @@ def load_numstat_cache(path):
                 continue
             rec = json.loads(line)
             cache[rec["hash"]] = [
-                (item["added"], item["deleted"], item["path"])
+                (item["added"], item["deleted"]) + split_rename(item["path"])
                 for item in rec["files"]
             ]
     return cache
@@ -243,6 +264,22 @@ def main():
 
     target_hashes = {c["hash"] for c in target_commits}
 
+    # A commit missing from the cache would silently get zero size/history features
+    missing_targets = target_hashes - numstat_cache.keys()
+    if missing_targets:
+        raise RuntimeError(
+            f"{len(missing_targets)} target commits are missing from {NUMSTAT_IN.name}; "
+            "run `python -m scripts.cache_numstat` to fill the cache"
+        )
+    missing_history = sum(1 for c in all_commits if c["hash"] not in numstat_cache)
+    if missing_history:
+        print(f"[WARN] {missing_history} non-target commits are missing from {NUMSTAT_IN.name}; "
+              "history features ignore them", flush=True)
+
+    # File history follows renames: a renamed path keeps the history key of the
+    # path it was renamed from.
+    history_key = {}
+
     file_developers = defaultdict(set)
     file_change_count = defaultdict(int)
     file_dev_change_count = defaultdict(int)
@@ -263,20 +300,21 @@ def main():
 
             numstat = numstat_cache.get(commit_hash, [])
 
-            files = [path for _, _, path in numstat]
+            files = [new for _, _, _, new in numstat]
             subsystems = {subsystem_of(path) for path in files if path}
             directories = {directory_of(path) for path in files if path}
+            keys = [history_key.get(old, old) for _, _, old, _ in numstat]
 
-            la_raw = sum(a for a, _, _ in numstat)
-            ld_raw = sum(d for _, d, _ in numstat)
-            churns = [a + d for a, d, _ in numstat]
+            la_raw = sum(a for a, _, _, _ in numstat)
+            ld_raw = sum(d for _, d, _, _ in numstat)
+            churns = [a + d for a, d, _, _ in numstat]
 
             if commit_hash in target_hashes:
                 ns = len(subsystems)
                 nm = len(directories)
                 nf = len(files)
 
-                lt_raw = sum(count_lines_in_parent(parent, path) for _, _, path in numstat)
+                lt_raw = sum(count_lines_in_parent(parent, old) for _, _, old, _ in numstat)
                 entropy = normalized_entropy(churns)
                 fix = fix_from_bugzilla(commit, bugs_by_id)
 
@@ -284,10 +322,10 @@ def main():
                 prior_changes_per_file = []
                 prior_author_changes_per_file = []
 
-                for _, _, path in numstat:
-                    prior_devs.update(file_developers[path])
-                    prior_changes_per_file.append(file_change_count[path])
-                    prior_author_changes_per_file.append(file_dev_change_count[(path, author)])
+                for key in keys:
+                    prior_devs.update(file_developers[key])
+                    prior_changes_per_file.append(file_change_count[key])
+                    prior_author_changes_per_file.append(file_dev_change_count[(key, author)])
 
                 ndev = len(prior_devs)
                 pd = sum(prior_changes_per_file) if prior_changes_per_file else 0
@@ -331,10 +369,12 @@ def main():
                 if emitted % 100 == 0:
                     f.flush()
 
-            for _, _, path in numstat:
-                file_developers[path].add(author)
-                file_change_count[path] += 1
-                file_dev_change_count[(path, author)] += 1
+            for key, (_, _, old, new) in zip(keys, numstat):
+                file_developers[key].add(author)
+                file_change_count[key] += 1
+                file_dev_change_count[(key, author)] += 1
+                if new != old:
+                    history_key[new] = key
 
             dev_prior_commit_dates[author].append(commit_date)
 

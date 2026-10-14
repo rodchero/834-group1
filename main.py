@@ -5,7 +5,7 @@ import sys
 import time
 
 from config import (
-    ROOT, COMMITS_RAW, NUMSTAT, COMMITS_FILTERED, COMMITS_FIX_CANDIDATES,
+    ROOT, COMMITS_RAW, COMMITS_FILTERED, COMMITS_FIX_CANDIDATES,
     BUGS_MATCHED, BUGS_MISSING_IDS,
     AI_CANDIDATES, FEATURES, FINAL_DATASET, SZZ_REPORT,
 )
@@ -13,13 +13,15 @@ from config import (
 PYTHON = sys.executable
 
 # (module, outputs). Stages run in order; each depends on the ones before it.
-# A stage is skipped when all of its outputs already exist.
+# A stage is skipped when all of its outputs already exist. outputs=None means
+# the stage always runs: it is incremental, or cheap and reads hand-edited inputs.
 STAGES = [
     ("scripts.firefoxExtract", [COMMITS_RAW]),
-    ("scripts.cache_numstat", [NUMSTAT]),
+    ("scripts.cache_numstat", None),
     ("scripts.filterCommits", [COMMITS_FILTERED, COMMITS_FIX_CANDIDATES]),
     ("scripts.getBugzillaList", [BUGS_MATCHED, BUGS_MISSING_IDS]),
     ("scripts.AIDetectionScripts.CommitsAIDetect", [AI_CANDIDATES]),
+    ("scripts.AIDetectionScripts.merge_labels", None),
     ("scripts.extract_features", [FEATURES]),
     ("scripts.run_szz", [FINAL_DATASET, SZZ_REPORT]),
 ]
@@ -54,7 +56,7 @@ def main():
     pipeline_start = time.perf_counter()
 
     for module, outputs in STAGES:
-        if all(p.exists() for p in outputs):
+        if outputs is not None and all(p.exists() for p in outputs):
             print(f"Skipping {module}, outputs exist", flush=True)
             timings.append((module, None))
         else:

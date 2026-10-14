@@ -25,6 +25,9 @@ COMMITS_FIX_CANDIDATES = ARTIFACTS / "commits_fix_candidates.jsonl"
 BUGS_MATCHED = ARTIFACTS / "bugzilla_matched.jsonl"
 BUGS_MISSING_IDS = ARTIFACTS / "bugzilla_missing_ids.txt"
 AI_CANDIDATES = ARTIFACTS / "ai_candidates.csv"
+AI_LABELS = ARTIFACTS / "ai_labels.csv"                       # merged manual labels
+LABELLING_TODO = ARTIFACTS / "labelling_todo.csv"             # rows still needing labels
+LABEL_DISAGREEMENTS = ARTIFACTS / "label_disagreements.csv"   # for the third-person pass
 FEATURES = ARTIFACTS / "commits_features.csv"
 FINAL_DATASET = ARTIFACTS / "final_dataset.csv"
 SZZ_REPORT = ARTIFACTS / "szz_report.json"
@@ -35,8 +38,15 @@ WINDOWS = {
     "human": (datetime(2024, 11, 1, tzinfo=timezone.utc),
               datetime(2025, 11, 1, tzinfo=timezone.utc)),
     "ai": (datetime(2025, 11, 1, tzinfo=timezone.utc), 
-           datetime(2026, 10, 10, tzinfo=timezone.utc)),
+           datetime(2026, 10, 1, tzinfo=timezone.utc)),
 }
+
+# Manual AI-disclosure labelling (inputs, kept in git).
+# Rater sheets are labelling_sheet_<rater>.csv or labelling_sheet_<rater>_<batch>.csv;
+# the bare labelling_sheet.csv is the blank template and is ignored.
+LABELLING_DIR = ROOT / "scripts" / "AIDetectionScripts"
+LABELLING_KEY = LABELLING_DIR / "labelling_key.csv"       # row_id -> hash for old sheets
+RESOLVED_LABELS = LABELLING_DIR / "resolved_labels.csv"   # third-person decisions (hash,label)
 
 # Thread pool size for git subprocess work (numstat caching, SZZ blame)
 MAX_WORKERS = min(16, os.cpu_count() or 4)
