@@ -139,7 +139,9 @@ def build_commit_date_map_from_raw(path):
 
 
 def get_fix_commits(commits, bugs_by_id, stats):
+    # Each candidate commit is counted exactly once, under the first check it fails.
     fix_commits = []
+    stats["candidate_commits"] = len(commits)
 
     for c in commits:
         if not looks_like_fix_commit(c):
@@ -151,27 +153,17 @@ def get_fix_commits(commits, bugs_by_id, stats):
             stats["excluded_no_bug_id"] += 1
             continue
 
-        linked_bugs = []
+        found_bugs = [(bug_id, bugs_by_id[bug_id]) for bug_id in bug_ids if bug_id in bugs_by_id]
+        if not found_bugs:
+            stats["excluded_bugs_missing_from_bugzilla"] += 1
+            continue
 
-        for bug_id in bug_ids:
-            bug = bugs_by_id.get(bug_id)
-            if not bug:
-                stats["excluded_missing_bugzilla_bug"] += 1
-                continue
-
-            if bug_is_meta(bug):
-                stats["excluded_meta_bug"] += 1
-                continue
-
-            bug_type = (bug.get("type") or "").strip().lower()
-            if bug_type and bug_type not in {"defect", "bug"}:
-                stats["excluded_non_defect_bug"] += 1
-                continue
-
-            linked_bugs.append((bug_id, bug))
-
+        linked_bugs = [(bug_id, bug) for bug_id, bug in found_bugs if is_actual_bug(bug)]
         if not linked_bugs:
-            stats["excluded_no_valid_linked_bug"] += 1
+            if all(bug_is_meta(bug) for _, bug in found_bugs):
+                stats["excluded_meta_bug"] += 1
+            else:
+                stats["excluded_non_defect_bug"] += 1
             continue
 
         creation_times = []
@@ -265,18 +257,15 @@ def blame_range(parent_hash, path, start, end):
     if key in _blame_range_cache:
         return _blame_range_cache[key]
 
-    try:
-        out = run_git([
-            "blame",
-            parent_hash,
-            "-L", f"{start},{end}",
-            "--porcelain",
-            "--",
-            path
-        ])
-    except subprocess.CalledProcessError:
-        _blame_range_cache[key] = set()
-        return set()
+    # Failures propagate so the caller can count them.
+    out = run_git([
+        "blame",
+        parent_hash,
+        "-L", f"{start},{end}",
+        "--porcelain",
+        "--",
+        path
+    ])
 
     commits = set()
     for line in out.splitlines():
@@ -288,72 +277,87 @@ def blame_range(parent_hash, path, start, end):
     return commits
 
 
-def run_szz(fix_commits, commit_dates, stats):
-    inducing_commits = set()
+def trace_fix_commit(item, commit_dates, rejected_after_report, unknown_date):
+    """
+    Returns (outcome, blamed_commits, had_blame_failures) for one fix commit.
+    """
+    fix_commit = item["commit"]
+    fix_hash = fix_commit["hash"]
+    parent = get_parent_from_commit(fix_commit)
+    report_date = item["report_date"]
 
-    for idx, item in enumerate(fix_commits, start=1):
-        fix_commit = item["commit"]
-        fix_hash = fix_commit["hash"]
-        parent = get_parent_from_commit(fix_commit)
-        report_date = item["report_date"]
+    if not parent:
+        return "excluded_no_parent", set(), False
 
-        if not parent:
-            stats["excluded_fix_no_parent"] += 1
-            continue
+    try:
+        deleted_lines = parse_deleted_lines_from_patch(fix_hash)
+    except subprocess.CalledProcessError as e:
+        print(f"[WARN] Could not parse patch for fix commit {fix_hash}: {e}", flush=True)
+        return "excluded_patch_parse_failure", set(), False
 
-        try:
-            deleted_lines = parse_deleted_lines_from_patch(fix_hash)
-        except subprocess.CalledProcessError as e:
-            print(f"[WARN] Could not parse patch for fix commit {fix_hash}: {e}", flush=True)
-            stats["excluded_patch_parse_failure"] += 1
-            continue
+    deleted_pairs = [(path, line_number) for path, line_number, _ in deleted_lines]
+    if not deleted_pairs:
+        return "excluded_no_deleted_lines", set(), False
 
-        deleted_pairs = [(path, line_number) for path, line_number, _ in deleted_lines]
-        if not deleted_pairs:
-            stats["excluded_fix_no_deleted_lines"] += 1
-            if idx % 100 == 0 or idx == len(fix_commits):
-                print(
-                    f"SZZ processed {idx}/{len(fix_commits)} fix commits; inducing so far={len(inducing_commits)}",
-                    flush=True
-                )
-            continue
+    ranges_by_path = group_contiguous_lines(deleted_pairs)
 
-        ranges_by_path = group_contiguous_lines(deleted_pairs)
+    tasks = []
+    for path, ranges in ranges_by_path.items():
+        for start, end in ranges:
+            tasks.append((path, start, end))
 
-        tasks = []
-        for path, ranges in ranges_by_path.items():
-            for start, end in ranges:
-                tasks.append((path, start, end))
+    blamed = set()
+    failed_ranges = 0
 
-        blamed = set()
+    with ThreadPoolExecutor(max_workers=BLAME_WORKERS) as ex:
+        future_map = {
+            ex.submit(blame_range, parent, path, start, end): (path, start, end)
+            for path, start, end in tasks
+        }
 
-        with ThreadPoolExecutor(max_workers=BLAME_WORKERS) as ex:
-            future_map = {
-                ex.submit(blame_range, parent, path, start, end): (path, start, end)
-                for path, start, end in tasks
-            }
+        for fut in as_completed(future_map):
+            try:
+                blamed_hashes = fut.result()
+            except Exception:
+                failed_ranges += 1
+                continue
 
-            for fut in as_completed(future_map):
-                try:
-                    blamed_hashes = fut.result()
-                except Exception:
-                    stats["excluded_blame_failure"] += 1
+            for blamed_hash in blamed_hashes:
+                if blamed_hash == fix_hash:
                     continue
 
-                for blamed_hash in blamed_hashes:
-                    if blamed_hash == fix_hash:
-                        continue
+                cand_date = commit_dates.get(blamed_hash)
+                if cand_date is None:
+                    unknown_date.add(blamed_hash)
+                    continue
 
-                    cand_date = commit_dates.get(blamed_hash)
-                    if cand_date is None:
-                        stats["excluded_blamed_commit_unknown_date"] += 1
-                        continue
+                if cand_date <= report_date:
+                    blamed.add(blamed_hash)
+                else:
+                    rejected_after_report.add(blamed_hash)
 
-                    if cand_date <= report_date:
-                        blamed.add(blamed_hash)
-                    else:
-                        stats["excluded_blamed_after_report"] += 1
+    if failed_ranges == len(tasks):
+        return "excluded_all_blames_failed", set(), True
+    if not blamed:
+        return "no_inducing_commit_found", set(), failed_ranges > 0
+    return "traced_to_inducing_commits", blamed, failed_ranges > 0
 
+
+def run_szz(fix_commits, commit_dates, stats, blamed_stats):
+    # Each validated fix commit is counted exactly once, under its outcome.
+    # fix_commits_with_some_blame_failures is a flag and overlaps the outcomes.
+    inducing_commits = set()
+    rejected_after_report = set()
+    unknown_date = set()
+    stats["validated_fix_commits"] = len(fix_commits)
+
+    for idx, item in enumerate(fix_commits, start=1):
+        outcome, blamed, had_blame_failures = trace_fix_commit(
+            item, commit_dates, rejected_after_report, unknown_date
+        )
+        stats[outcome] += 1
+        if had_blame_failures:
+            stats["fix_commits_with_some_blame_failures"] += 1
         inducing_commits.update(blamed)
 
         if idx % 100 == 0 or idx == len(fix_commits):
@@ -361,6 +365,12 @@ def run_szz(fix_commits, commit_dates, stats):
                 f"SZZ processed {idx}/{len(fix_commits)} fix commits; inducing so far={len(inducing_commits)}",
                 flush=True
             )
+
+    # Unique blamed commits. A commit rejected for one fix but accepted for
+    # another is counted only as inducing.
+    blamed_stats["inducing_commits"] = len(inducing_commits)
+    blamed_stats["rejected_after_bug_report"] = len(rejected_after_report - inducing_commits)
+    blamed_stats["unknown_commit_date"] = len(unknown_date)
 
     return inducing_commits
 
@@ -418,23 +428,40 @@ def main():
     if not feature_rows:
         raise RuntimeError("No rows found in commits_features.csv")
 
-    stats = defaultdict(int)
+    search_stats = defaultdict(int)
+    trace_stats = defaultdict(int)
+    blamed_stats = defaultdict(int)
 
     print("Identifying validated bug-fixing commits...", flush=True)
-    fix_commits = get_fix_commits(commits, bugs_by_id, stats)
-    stats["validated_fix_commits"] = len(fix_commits)
+    fix_commits = get_fix_commits(commits, bugs_by_id, search_stats)
+    search_stats["validated_fix_commits"] = len(fix_commits)
     print(f"Found {len(fix_commits)} validated bug-fixing commits", flush=True)
 
     print("Running SZZ...", flush=True)
-    inducing_commits = run_szz(fix_commits, commit_dates, stats)
-    stats["inducing_commits"] = len(inducing_commits)
+    inducing_commits = run_szz(fix_commits, commit_dates, trace_stats, blamed_stats)
     print(f"Identified {len(inducing_commits)} inducing commits", flush=True)
 
     write_final_dataset(feature_rows, inducing_commits, OUT)
     print(f"Wrote labeled dataset to: {OUT}", flush=True)
 
+    report = {
+        "fix_commit_search": {
+            "unit": "candidate commits, each counted once under the first check it fails",
+            **search_stats,
+        },
+        "szz_tracing": {
+            "unit": "validated fix commits, each counted once under its outcome "
+                    "(fix_commits_with_some_blame_failures overlaps the outcomes)",
+            **trace_stats,
+        },
+        "blamed_commits": {
+            "unit": "unique commits blamed by SZZ",
+            **blamed_stats,
+        },
+    }
+
     with open(REPORT_OUT, "w", encoding="utf-8") as f:
-        json.dump(dict(stats), f, indent=2, sort_keys=True)
+        json.dump(report, f, indent=2)
 
     print(f"Wrote SZZ report to: {REPORT_OUT}", flush=True)
 
