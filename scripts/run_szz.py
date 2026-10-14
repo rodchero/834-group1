@@ -13,7 +13,9 @@ ROOT = Path(__file__).resolve().parent.parent
 REPO = ROOT / "firefox"
 
 RAW_COMMITS_IN = ROOT / "commits_raw.jsonl"
-COMMITS_IN = ROOT / "commits_filtered.jsonl"
+# Fixes are searched from the window start onward with no end date, so bugs
+# fixed after the window still label the in-window commit that caused them.
+FIX_CANDIDATES_IN = ROOT / "commits_fix_candidates.jsonl"
 BUGS_IN = ROOT / "bugzilla_matched.jsonl"
 FEATURES_IN = ROOT / "commits_features.csv"
 OUT = ROOT / "final_dataset.csv"
@@ -399,20 +401,20 @@ def main():
         raise FileNotFoundError(f"Firefox repo not found: {REPO}")
     if not RAW_COMMITS_IN.exists():
         raise FileNotFoundError(f"Missing input file: {RAW_COMMITS_IN}")
-    if not COMMITS_IN.exists():
-        raise FileNotFoundError(f"Missing input file: {COMMITS_IN}")
+    if not FIX_CANDIDATES_IN.exists():
+        raise FileNotFoundError(f"Missing input file: {FIX_CANDIDATES_IN}")
     if not BUGS_IN.exists():
         raise FileNotFoundError(f"Missing input file: {BUGS_IN}")
     if not FEATURES_IN.exists():
         raise FileNotFoundError(f"Missing input file: {FEATURES_IN}")
 
-    commits = load_commits(COMMITS_IN)
+    commits = load_commits(FIX_CANDIDATES_IN)
     bugs_by_id = load_bugs(BUGS_IN)
     feature_rows = load_features(FEATURES_IN)
     commit_dates = build_commit_date_map_from_raw(RAW_COMMITS_IN)
 
     if not commits:
-        raise RuntimeError("No commits found in commits_filtered.jsonl")
+        raise RuntimeError("No commits found in commits_fix_candidates.jsonl")
     if not feature_rows:
         raise RuntimeError("No rows found in commits_features.csv")
 

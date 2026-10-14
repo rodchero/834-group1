@@ -1,4 +1,6 @@
-# Fetch Bugzilla bugs by the exact bug IDs referenced in commits_filtered.jsonl.
+# Fetch Bugzilla bugs by the exact bug IDs referenced in commits_filtered.jsonl
+# and commits_fix_candidates.jsonl (fixes landing after the study window, which
+# SZZ also needs bug data for).
 # This is better for SZZ prep than date-window crawling, because commits may
 # reference bugs created long before the commit date.
 #
@@ -7,7 +9,7 @@
 #   bugzilla_missing_ids.txt - bug IDs referenced by commits but not returned
 #
 # Assumptions:
-# - commits_filtered.jsonl contains one JSON object per line
+# - the input files contain one JSON commit object per line
 # - commit subject/message contains patterns like "Bug 1234567"
 #
 # Notes:
@@ -19,7 +21,7 @@ import re
 import time
 import requests
 
-COMMITS_IN = "commits_filtered.jsonl"
+COMMITS_IN = ["commits_filtered.jsonl", "commits_fix_candidates.jsonl"]
 BUGS_OUT = "bugzilla_matched.jsonl"
 MISSING_IDS_OUT = "bugzilla_missing_ids.txt"
 
@@ -56,27 +58,28 @@ def chunks(seq, size):
         yield seq[i:i + size]
 
 
-def load_bug_ids_from_commits(path):
+def load_bug_ids_from_commits(paths):
     bug_ids = set()
-    commit_count = 0
+    seen_hashes = set()
 
-    with open(path, encoding="utf-8") as f:
-        for line in f:
-            if not line.strip():
-                continue
+    for path in paths:
+        with open(path, encoding="utf-8") as f:
+            for line in f:
+                if not line.strip():
+                    continue
 
-            commit_count += 1
-            c = json.loads(line)
+                c = json.loads(line)
+                seen_hashes.add(c.get("hash"))
 
-            text = " ".join([
-                c.get("subject", "") or "",
-                c.get("message", "") or "",
-            ])
+                text = " ".join([
+                    c.get("subject", "") or "",
+                    c.get("message", "") or "",
+                ])
 
-            for m in BUG_RE.finditer(text):
-                bug_ids.add(int(m.group(1)))
+                for m in BUG_RE.finditer(text):
+                    bug_ids.add(int(m.group(1)))
 
-    return sorted(bug_ids), commit_count
+    return sorted(bug_ids), len(seen_hashes)
 
 
 def fetch_bug_batch(session, bug_ids, retries=3):
@@ -103,7 +106,7 @@ def fetch_bug_batch(session, bug_ids, retries=3):
 def main():
     print("Loading bug IDs from commits...")
     bug_ids, commit_count = load_bug_ids_from_commits(COMMITS_IN)
-    print(f"Loaded {commit_count} commits")
+    print(f"Loaded {commit_count} unique commits")
     print(f"Found {len(bug_ids)} unique bug IDs")
 
     session = requests.Session()

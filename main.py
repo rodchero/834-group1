@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parent
 PYTHON = sys.executable
 
 STEP_EXTRACT = ("scripts/firefoxExtract.py", ["commits_raw.jsonl"])
-STEP_FILTER = ("scripts/filterCommits.py", ["commits_filtered.jsonl"])
+STEP_FILTER = ("scripts/filterCommits.py", ["commits_filtered.jsonl", "commits_fix_candidates.jsonl"])
 
 STEP_BUGZILLA = ("scripts/getBugzillaList.py", ["bugzilla_matched.jsonl", "bugzilla_missing_ids.txt"])
 STEP_FEATURES = ("scripts/extract_features.py", ["commits_features.csv"])

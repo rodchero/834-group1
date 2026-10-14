@@ -5,6 +5,7 @@ firefox
 # Dataset pipeline artifacts
 # Do not gitignore commits_numstat.jsonl
 /commits_filtered.jsonl
+/commits_fix_candidates.jsonl
 /commits_raw.jsonl
 /bugzilla_missing_ids.txt
 /bugzilla_matched.jsonl
