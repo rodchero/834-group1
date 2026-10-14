@@ -7,9 +7,11 @@ signatures in formats not present in cleaned commits
 """
 
 import json, re
-from pathlib import Path
 
-INPUTS = ["commits_raw.jsonl", "commits_raw_AI.jsonl"]
+from config import COMMITS_RAW
+
+# commits_raw.jsonl covers both study windows
+INPUTS = [COMMITS_RAW]
 
 COAUTHOR = re.compile(r"^\s*co-authored-by:\s*(.+)$", re.I | re.M)
 TRAILER = re.compile(r"^([A-Za-z][A-Za-z0-9-]{2,30}):\s+\S", re.M)

@@ -2,16 +2,9 @@
 
 import json
 import subprocess
-from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-ROOT = Path(__file__).resolve().parent.parent
-REPO = ROOT / "firefox"
-
-COMMITS_IN = ROOT / "commits_raw.jsonl"
-OUT = ROOT / "commits_numstat.jsonl"
-
-MAX_WORKERS = 16
+from config import REPO, MAX_WORKERS, COMMITS_RAW as COMMITS_IN, NUMSTAT as OUT
 
 
 def run_git(args):

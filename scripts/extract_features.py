@@ -6,17 +6,15 @@ import math
 import subprocess
 from collections import defaultdict
 from datetime import datetime, timezone
-from pathlib import Path
-import re
 
-ROOT = Path(__file__).resolve().parent.parent
-REPO = ROOT / "firefox"
-
-RAW_COMMITS_IN = ROOT / "commits_raw.jsonl"
-TARGET_COMMITS_IN = ROOT / "commits_filtered.jsonl"
-NUMSTAT_IN = ROOT / "commits_numstat.jsonl"
-BUGS_IN = ROOT / "bugzilla_matched.jsonl"
-OUT = ROOT / "commits_features.csv"
+from config import (
+    REPO, BUG_RE,
+    COMMITS_RAW as RAW_COMMITS_IN,
+    COMMITS_FILTERED as TARGET_COMMITS_IN,
+    NUMSTAT as NUMSTAT_IN,
+    BUGS_MATCHED as BUGS_IN,
+    FEATURES as OUT,
+)
 
 FIELDNAMES = [
     "transactionid",
@@ -36,9 +34,6 @@ FIELDNAMES = [
     "rexp",
     "sexp",
 ]
-
-BUG_RE = re.compile(r"\bbug\s*(\d+)\b", re.I)
-
 
 def run_git(args):
     result = subprocess.run(

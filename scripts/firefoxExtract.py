@@ -2,11 +2,8 @@
 
 import json
 import subprocess
-from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
-REPO = ROOT / "firefox"
-OUT = ROOT / "commits_raw.jsonl"
+from config import REPO, COMMITS_RAW as OUT
 
 FIELDS = ["%H", "%P", "%cI", "%ae", "%ce", "%s", "%B"]
 NAMES = ["hash", "parents", "commit_date", "author_email", "committer_email", "subject", "message"]

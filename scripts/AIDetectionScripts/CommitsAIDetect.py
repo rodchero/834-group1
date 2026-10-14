@@ -9,11 +9,7 @@ Two kinds, reported separately:
 """
 import csv, json, re
 
-
-WINDOWS = {
-    "human": ("commits_filtered.jsonl", "bugzilla_matched.jsonl"),
-    "ai": ("commits_filtered_AI.jsonl", "bugzilla_matched_AI.jsonl"),
-}
+from config import COMMITS_FILTERED, BUGS_MATCHED, AI_CANDIDATES, WINDOWS
 
 
 
@@ -90,17 +86,9 @@ def matched_lines(msg, rx):
     return " || ".join(matches[:2])
 
 
-for window, (path, bugs_path) in WINDOWS.items():
-    
-    bugs = load_bugs(bugs_path)
-
-    commits = []
+def detect(commits, bugs):
     rows = []
     agents = {}
-    
-    with open(path) as f:
-        for line in f:
-            commits.append(json.loads(line))
 
     for c in commits:
         msg = c["message"]
@@ -119,8 +107,6 @@ for window, (path, bugs_path) in WINDOWS.items():
         else:
             continue
 
-
-
         bug = re.search(r"bug ?(\d+)", c["subject"], re.I)
 
         if bug:
@@ -135,7 +121,8 @@ for window, (path, bugs_path) in WINDOWS.items():
         ctx = matched_lines(msg, rx)
 
         rows.append({
-            "hash": c["hash"][:12],
+            "hash": c["hash"],
+            "window": c["window"],
             "date": c["commit_date"][:10],
             "author": c["author_email"],
             "kind": kind,
@@ -149,18 +136,10 @@ for window, (path, bugs_path) in WINDOWS.items():
             "rater": "",
         })
 
-    out = f"ai_candidates_{window}.csv"
+    return rows, agents
 
-    if rows:
-        fieldnames = list(rows[0])
-    else:
-        fieldnames = ["hash"]
 
-    with open(out, "w", newline="") as f:
-            w = csv.DictWriter(f, fieldnames=fieldnames)
-            w.writeheader()
-            w.writerows(rows)
-
+def summarize(window, n_commits, rows, agents):
     n_agent = sum(agents.values())
     tags = {}
     for r in rows:
@@ -169,9 +148,9 @@ for window, (path, bugs_path) in WINDOWS.items():
 
     n_self = len(rows) - n_agent
 
-    print(window + ": " + str(len(commits)) + " commits")
+    print(window + ": " + str(n_commits) + " commits")
     print("  agent-authored " + str(n_agent) + "   " + str(dict(agents)))
-    print("  self-admitted  " + str(n_self) + "   pre-tagged " + str(dict(tags)) + " -> " + out)
+    print("  self-admitted  " + str(n_self) + "   pre-tagged " + str(dict(tags)))
 
     self_rows = []
     for r in rows:
@@ -198,3 +177,32 @@ for window, (path, bugs_path) in WINDOWS.items():
         top_comps = sorted(comps.items(), key=lambda pair: pair[1], reverse=True)[:8]
         for comp, n in top_comps:
             print("      " + str(n) + "  " + comp)
+
+
+def main():
+    bugs = load_bugs(BUGS_MATCHED)
+
+    commits_by_window = {window: [] for window in WINDOWS}
+    with open(COMMITS_FILTERED) as f:
+        for line in f:
+            c = json.loads(line)
+            commits_by_window[c["window"]].append(c)
+
+    all_rows = []
+    for window, commits in commits_by_window.items():
+        rows, agents = detect(commits, bugs)
+        summarize(window, len(commits), rows, agents)
+        all_rows.extend(rows)
+
+    fieldnames = ["hash", "window", "date", "author", "kind", "agent", "component",
+                  "whiteboard", "matched", "context", "subject", "label", "rater"]
+    with open(AI_CANDIDATES, "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=fieldnames)
+        w.writeheader()
+        w.writerows(all_rows)
+
+    print("\nWrote " + str(len(all_rows)) + " candidates to " + str(AI_CANDIDATES))
+
+
+if __name__ == "__main__":
+    main()

@@ -17,8 +17,7 @@ import argparse, csv, json, subprocess, sys
 from pathlib import Path
 
 KEY = "labelling_key.csv"
-JSONL = ["commits_filtered.jsonl", "commits_filtered_AI.jsonl",
-         "commits_raw.jsonl", "commits_raw_AI.jsonl"]
+JSONL = ["artifacts/commits_filtered.jsonl", "artifacts/commits_raw.jsonl"]
 
 ap = argparse.ArgumentParser()
 ap.add_argument("row_ids", nargs="+", help="e.g. R0084 R0562")

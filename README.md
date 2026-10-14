@@ -1,21 +1,76 @@
 # 834-group1
 
-## Documentation
-`ReplicationPackageScript/` - scripts from the replication package
-`scripts/` - our scripts, mostly for getting the dataset together
+Replication of Kamei et al., "A Large-Scale Empirical Study of Just-in-Time Quality Assurance" (TSE 2013), RQ1–RQ3, on recent Mozilla Firefox data: one year of human-written commits before November 2025, and AI-generated/assisted commits from November 2025 on.
 
+## Repository layout
 
-### Setup
-1. clone firefox repo into root project directory (same location as this README) with: 
-```git clone --no-checkout https://github.com/mozilla-firefox/firefox```
-This may take a while, ~6Gb.
+| Path | Contents |
+|---|---|
+| `main.py` | Runs the dataset pipeline end to end |
+| `config.py` | Shared paths, study windows, worker counts, Bugzilla settings |
+| `scripts/` | Pipeline stages (see below) |
+| `scripts/AIDetectionScripts/` | AI-disclosure detection, manual labelling sheets and helpers |
+| `artifacts/` | Pipeline outputs. Gitignored except `commits_numstat.jsonl` (git lfs) |
+| `ReplicationPackageScript/` | R scripts from the paper's replication package (RQ1–RQ3 models) |
+| `labelling_key.csv` | Maps labelling-sheet `row_id`s to commit hashes |
+| `firefox/` | Local clone of the Firefox repo (not tracked, see Setup) |
 
-2. Install git lfs to fetch numstat cache.
-- install git lfs on the computer (apt/brew or tarball)
-- run ```git lfs install``` in the repo
-- if the `commits_numstat.jsonl` file is still just a pointer, run ```git lfs pull```
+## Setup
 
+1. Clone the Firefox repo into the project root (next to this README). This takes a while, about 6 GB:
+   ```
+   git clone --no-checkout https://github.com/mozilla-firefox/firefox
+   ```
 
-3. run data pipeline (python3 main.py) to generate dataset (WIP). This may also take a while since the requests to bugzilla are intentionally throttled. 
+2. Install git lfs to fetch the numstat cache:
+   - install git lfs on the computer (apt/brew or tarball)
+   - run `git lfs install` in this repo
+   - if `artifacts/commits_numstat.jsonl` is still just a pointer, run `git lfs pull`
 
+3. Create a virtual environment and install the dependencies (Python 3.10+):
+   ```
+   python3 -m venv .venv
+   source .venv/bin/activate        # Windows: .venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
+   Keep the venv activated when running the pipeline. `main.py` launches each stage with the same interpreter it was started with, so every stage runs inside the venv.
 
+   If you add a third-party dependency, install it into the venv and regenerate the pinned list with `pip freeze > requirements.txt`.
+
+## Running the pipeline
+
+```
+python main.py
+```
+
+Stages run in order. A stage is skipped when all of its outputs already exist in `artifacts/`, so delete an artifact to regenerate it and everything that depends on it. Each stage's runtime is printed, with a summary at the end. The Bugzilla stage takes a while, because requests are throttled on purpose.
+
+| # | Stage | Output (`artifacts/`) | What it does |
+|---|---|---|---|
+| 1 | `scripts/firefoxExtract.py` | `commits_raw.jsonl` | All non-merge commits from the clone |
+| 2 | `scripts/cache_numstat.py` | `commits_numstat.jsonl` | Per-file added/deleted lines per commit (tracked in git lfs, normally skipped) |
+| 3 | `scripts/filterCommits.py` | `commits_filtered.jsonl` | Keeps commits inside a study window, tags each with `window` (`human`/`ai`), removes WPT imports, backouts, vendored code and commits without a bug ID |
+| 4 | `scripts/getBugzillaList.py` | `bugzilla_matched.jsonl`, `bugzilla_missing_ids.txt` | Fetches every referenced Bugzilla bug (both windows) |
+| 5 | `scripts/AIDetectionScripts/CommitsAIDetect.py` | `ai_candidates.csv` | Flags agent-signed and self-admitted AI commits for labelling |
+| 6 | `scripts/extract_features.py` | `commits_features.csv` | Kamei change metrics for every filtered commit (column names follow the replication package) |
+| 7 | `scripts/run_szz.py` | `final_dataset.csv`, `szz_report.json` | SZZ labelling of defect-inducing commits (WIP) |
+
+Study windows and other parameters are set in `config.py`. Stage scripts import it as a top-level module, so to run a single stage, run it as a module from the project root:
+
+```
+python -m scripts.filterCommits
+```
+
+## AI-disclosure labelling (WIP)
+
+The self-admitted candidates from stage 5 are labelled by hand (see `scripts/AIDetectionScripts/LABELLING_INSTRUCTIONS.md`). To print the full message of a labelling row, run this from the project root:
+
+```
+python scripts/AIDetectionScripts/show_commit.py R0084 R0562
+```
+
+Still to come: merging the two raters' labels and computing Cohen's κ, tagging AI exposure per developer (`tag_exposure.py`), and building the final per-dataset CSVs in the replication package's input format.
+
+## Replication package
+
+The R scripts in `ReplicationPackageScript/` need R and the `MASS` package (`install.packages("MASS")`). See `ReplicationPackageScript/ReadMe.txt` for how to run them.

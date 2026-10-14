@@ -1,4 +1,5 @@
-# Fetch Bugzilla bugs by the exact bug IDs referenced in commits_filtered.jsonl.
+# Fetch Bugzilla bugs by the exact bug IDs referenced in commits_filtered.jsonl
+# (both study windows, so one fetch covers every dataset).
 # This is better for SZZ prep than date-window crawling, because commits may
 # reference bugs created long before the commit date.
 #
@@ -15,17 +16,17 @@
 # - Keeps raw Bugzilla fields useful for later bug filtering and SZZ prep
 
 import json
-import re
 import time
 import requests
 
-COMMITS_IN = "commits_filtered.jsonl"
-BUGS_OUT = "bugzilla_matched.jsonl"
-MISSING_IDS_OUT = "bugzilla_missing_ids.txt"
-
-BUGZILLA_URL = "https://bugzilla.mozilla.org/rest/bug"
-BATCH_SIZE = 200
-SLEEP_BETWEEN_REQUESTS = 0.25
+from config import (
+    BUG_RE, BUGZILLA_URL,
+    BUGZILLA_BATCH_SIZE as BATCH_SIZE,
+    BUGZILLA_SLEEP as SLEEP_BETWEEN_REQUESTS,
+    COMMITS_FILTERED as COMMITS_IN,
+    BUGS_MATCHED as BUGS_OUT,
+    BUGS_MISSING_IDS as MISSING_IDS_OUT,
+)
 
 INCLUDE_FIELDS = [
     "id",
@@ -47,9 +48,6 @@ INCLUDE_FIELDS = [
     "blocks",
     "depends_on",
 ]
-
-BUG_RE = re.compile(r"\bbug\s*(\d+)\b", re.I)
-
 
 def chunks(seq, size):
     for i in range(0, len(seq), size):

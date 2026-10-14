@@ -1,25 +1,22 @@
 import json
 import re
 from datetime import datetime, timezone
-from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
-
-IN = ROOT / "commits_raw.jsonl"
-OUT = ROOT / "commits_filtered.jsonl"
-
-# Target study window
-SINCE = datetime(2024, 11, 1, tzinfo=timezone.utc)
-UNTIL = datetime(2025, 11, 1, tzinfo=timezone.utc)  # exclusive
+from config import COMMITS_RAW, COMMITS_FILTERED, WINDOWS, BUG_RE
 
 
 def parse_iso8601(s):
     return datetime.fromisoformat(s.replace("Z", "+00:00")).astimezone(timezone.utc)
 
 
-FUNNEL = [
-    ("outside date range", lambda c: not (SINCE <= parse_iso8601(c["commit_date"]) < UNTIL)),
+def window_of(dt):
+    for name, (since, until) in WINDOWS.items():
+        if since <= dt and (until is None or dt < until):
+            return name
+    return None
 
+
+FUNNEL = [
     # Done by bots / imported automation
     ("wpt import", lambda c: "[wpt PR" in c["subject"]),
 
@@ -30,37 +27,56 @@ FUNNEL = [
     ("third-party", lambda c: re.search(r"vendor .* from|cherry-pick upstream", c["subject"], re.I)),
 
     # Require Bugzilla bug ID in subject
-    ("no bug ID", lambda c: not re.search(r"\bbug ?\d+\b", c["subject"], re.I)),
+    ("no bug ID", lambda c: not BUG_RE.search(c["subject"])),
 ]
 
 
 def main():
-    if not IN.exists():
-        raise FileNotFoundError(f"Missing input: {IN}")
+    if not COMMITS_RAW.exists():
+        raise FileNotFoundError(f"Missing input: {COMMITS_RAW}")
 
-    commits = [json.loads(l) for l in open(IN, encoding="utf-8") if l.strip()]
-    print(f"Loaded {len(commits)} raw commits")
+    by_window = {name: [] for name in WINDOWS}
+    n_raw = 0
+    with open(COMMITS_RAW, encoding="utf-8") as f:
+        for line in f:
+            if not line.strip():
+                continue
+            n_raw += 1
+            c = json.loads(line)
+            window = window_of(parse_iso8601(c["commit_date"]))
+            if window:
+                c["window"] = window
+                by_window[window].append(c)
 
-    kept = commits
-    for name, test in FUNNEL:
-        survivors = []
-        removed = 0
-        for commit in kept:
-            if test(commit):
-                removed += 1
-            else:
-                survivors.append(commit)
-        kept = survivors
-        print(f"{name:<20} -{removed:<8} remaining={len(kept)}")
+    print(f"Loaded {n_raw} raw commits")
+    print(f"{'outside all windows':<20} -{n_raw - sum(map(len, by_window.values()))}")
 
-    with open(OUT, "w", encoding="utf-8") as f:
-        for c in kept:
+    kept_all = []
+    for window, kept in by_window.items():
+        since, until = WINDOWS[window]
+        until_s = until.date() if until else "HEAD"
+        print(f"\n[{window}] {since.date()} .. {until_s}: {len(kept)} commits in window")
+
+        for name, test in FUNNEL:
+            survivors = []
+            removed = 0
+            for commit in kept:
+                if test(commit):
+                    removed += 1
+                else:
+                    survivors.append(commit)
+            kept = survivors
+            print(f"  {name:<18} -{removed:<8} remaining={len(kept)}")
+
+        if not kept:
+            raise RuntimeError(f"Filtering produced no commits for window '{window}'")
+        kept_all.extend(kept)
+
+    with open(COMMITS_FILTERED, "w", encoding="utf-8") as f:
+        for c in kept_all:
             f.write(json.dumps(c, ensure_ascii=False) + "\n")
 
-    print(f"Wrote {len(kept)} filtered commits to {OUT}")
-
-    if len(kept) == 0:
-        raise RuntimeError("Filtering produced no commits")
+    print(f"\nWrote {len(kept_all)} filtered commits to {COMMITS_FILTERED}")
 
 
 if __name__ == "__main__":

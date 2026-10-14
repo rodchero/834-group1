@@ -3,14 +3,12 @@
 firefox
 
 # Dataset pipeline artifacts
-# Do not gitignore commits_numstat.jsonl
-/commits_filtered.jsonl
-/commits_raw.jsonl
-/bugzilla_missing_ids.txt
-/bugzilla_matched.jsonl
-/commits_features.csv
+# Do not gitignore commits_numstat.jsonl (tracked with git lfs)
+/artifacts/*
+!/artifacts/commits_numstat.jsonl
 
 # Local config
+/.venv/
 /.vscode/
 *.DS_Store
 
@@ -20,3 +18,5 @@ firefox
 
 # Other
 /data/
+# Python
+__pycache__/

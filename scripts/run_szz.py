@@ -7,17 +7,17 @@ import subprocess
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
-from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
-REPO = ROOT / "firefox"
-
-RAW_COMMITS_IN = ROOT / "commits_raw.jsonl"
-COMMITS_IN = ROOT / "commits_filtered.jsonl"
-BUGS_IN = ROOT / "bugzilla_matched.jsonl"
-FEATURES_IN = ROOT / "commits_features.csv"
-OUT = ROOT / "final_dataset.csv"
-REPORT_OUT = ROOT / "szz_report.json"
+from config import (
+    REPO,
+    COMMITS_RAW as RAW_COMMITS_IN,
+    COMMITS_FILTERED as COMMITS_IN,
+    BUGS_MATCHED as BUGS_IN,
+    FEATURES as FEATURES_IN,
+    FINAL_DATASET as OUT,
+    SZZ_REPORT as REPORT_OUT,
+    MAX_WORKERS as BLAME_WORKERS,
+)
 
 BUG_RE = re.compile(r"\bbug\s*(\d+)\b", re.I)
 FIX_PATTERNS = [
@@ -27,7 +27,6 @@ FIX_PATTERNS = [
     re.compile(r"^\s*defect\s+\d+\b", re.I),
 ]
 
-BLAME_WORKERS = 16
 _blame_range_cache = {}
 
 
