@@ -11,7 +11,7 @@ REPO = ROOT / "firefox"
 COMMITS_IN = ROOT / "commits_raw.jsonl"
 OUT = ROOT / "commits_numstat.jsonl"
 
-MAX_WORKERS = 6
+MAX_WORKERS = 16
 
 
 def run_git(args):

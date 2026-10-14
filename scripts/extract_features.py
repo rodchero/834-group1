@@ -7,6 +7,7 @@ import subprocess
 from collections import defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
+import re
 
 ROOT = Path(__file__).resolve().parent.parent
 REPO = ROOT / "firefox"
@@ -14,6 +15,7 @@ REPO = ROOT / "firefox"
 RAW_COMMITS_IN = ROOT / "commits_raw.jsonl"
 TARGET_COMMITS_IN = ROOT / "commits_filtered.jsonl"
 NUMSTAT_IN = ROOT / "commits_numstat.jsonl"
+BUGS_IN = ROOT / "bugzilla_matched.jsonl"
 OUT = ROOT / "commits_features.csv"
 
 FIELDNAMES = [
@@ -34,6 +36,8 @@ FIELDNAMES = [
     "rexp",
     "sexp",
 ]
+
+BUG_RE = re.compile(r"\bbug\s*(\d+)\b", re.I)
 
 
 def run_git(args):
@@ -91,12 +95,6 @@ def normalized_entropy(churns):
     return ent / math.log2(n)
 
 
-def fix_heuristic(subject, message):
-    text = f"{subject}\n{message}".lower()
-    keywords = ["bug", "fix", "fixed", "defect", "patch"]
-    return 1 if any(k in text for k in keywords) else 0
-
-
 def load_commits(path):
     commits = []
     with open(path, encoding="utf-8") as f:
@@ -123,6 +121,61 @@ def load_numstat_cache(path):
                 for item in rec["files"]
             ]
     return cache
+
+
+def load_bugs(path):
+    bugs = {}
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            if line.strip():
+                b = json.loads(line)
+                bugs[int(b["id"])] = b
+    return bugs
+
+
+def extract_bug_ids(commit):
+    text = " ".join([
+        commit.get("subject", "") or "",
+        commit.get("message", "") or "",
+    ])
+    return [int(m.group(1)) for m in BUG_RE.finditer(text)]
+
+
+def bug_is_meta(bug):
+    keywords = bug.get("keywords") or []
+    if isinstance(keywords, str):
+        keywords = [keywords]
+    keywords_lower = {str(k).strip().lower() for k in keywords}
+
+    if "meta" in keywords_lower:
+        return True
+
+    summary = (bug.get("summary") or "").strip().lower()
+    if summary.startswith("[meta]") or summary.startswith("meta:"):
+        return True
+
+    return False
+
+
+def is_actual_bug(bug):
+    bug_type = (bug.get("type") or "").strip().lower()
+
+    if bug_type and bug_type not in {"defect", "bug"}:
+        return False
+
+    if bug_is_meta(bug):
+        return False
+
+    return True
+
+
+def fix_from_bugzilla(commit, bugs_by_id):
+    bug_ids = extract_bug_ids(commit)
+    for bug_id in bug_ids:
+        bug = bugs_by_id.get(bug_id)
+        if bug and is_actual_bug(bug):
+            return 1
+    return 0
 
 
 def get_parent_from_commit(commit):
@@ -180,10 +233,13 @@ def main():
         raise FileNotFoundError(f"Missing input file: {TARGET_COMMITS_IN}")
     if not NUMSTAT_IN.exists():
         raise FileNotFoundError(f"Missing input file: {NUMSTAT_IN}")
+    if not BUGS_IN.exists():
+        raise FileNotFoundError(f"Missing input file: {BUGS_IN}")
 
     all_commits = load_commits(RAW_COMMITS_IN)
     target_commits = load_commits(TARGET_COMMITS_IN)
     numstat_cache = load_numstat_cache(NUMSTAT_IN)
+    bugs_by_id = load_bugs(BUGS_IN)
 
     if not all_commits:
         raise RuntimeError("No commits found in commits_raw.jsonl")
@@ -208,8 +264,6 @@ def main():
             commit_hash = commit["hash"]
             commit_date = commit["_dt"]
             author = (commit.get("author_email") or "").strip().lower()
-            subject = commit.get("subject", "") or ""
-            message = commit.get("message", "") or ""
             parent = get_parent_from_commit(commit)
 
             numstat = numstat_cache.get(commit_hash, [])
@@ -229,7 +283,7 @@ def main():
 
                 lt_raw = sum(count_lines_in_parent(parent, path) for _, _, path in numstat)
                 entropy = normalized_entropy(churns)
-                fix = fix_heuristic(subject, message)
+                fix = fix_from_bugzilla(commit, bugs_by_id)
 
                 prior_devs = set()
                 prior_changes_per_file = []
