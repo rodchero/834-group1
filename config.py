@@ -19,6 +19,9 @@ ARTIFACTS.mkdir(exist_ok=True)
 COMMITS_RAW = ARTIFACTS / "commits_raw.jsonl"
 NUMSTAT = ARTIFACTS / "commits_numstat.jsonl"
 COMMITS_FILTERED = ARTIFACTS / "commits_filtered.jsonl"
+# SZZ fix candidates: same quality filters, from the earliest window start
+# onward with no end date, so fixes landing after a window are still traced
+COMMITS_FIX_CANDIDATES = ARTIFACTS / "commits_fix_candidates.jsonl"
 BUGS_MATCHED = ARTIFACTS / "bugzilla_matched.jsonl"
 BUGS_MISSING_IDS = ARTIFACTS / "bugzilla_missing_ids.txt"
 AI_CANDIDATES = ARTIFACTS / "ai_candidates.csv"

@@ -49,11 +49,11 @@ Stages run in order. A stage is skipped when all of its outputs already exist in
 |---|---|---|---|
 | 1 | `scripts/firefoxExtract.py` | `commits_raw.jsonl` | All non-merge commits from the clone |
 | 2 | `scripts/cache_numstat.py` | `commits_numstat.jsonl` | Per-file added/deleted lines per commit (tracked in git lfs, normally skipped) |
-| 3 | `scripts/filterCommits.py` | `commits_filtered.jsonl` | Keeps commits inside a study window, tags each with `window` (`human`/`ai`), removes WPT imports, backouts, vendored code and commits without a bug ID |
-| 4 | `scripts/getBugzillaList.py` | `bugzilla_matched.jsonl`, `bugzilla_missing_ids.txt` | Fetches every referenced Bugzilla bug (both windows) |
+| 3 | `scripts/filterCommits.py` | `commits_filtered.jsonl`, `commits_fix_candidates.jsonl` | Keeps commits inside a study window, tags each with `window` (`human`/`ai`), removes WPT imports, backouts, vendored code and commits without a bug ID. Also writes SZZ fix candidates: the same filters from the earliest window start with no end date, so fixes landing after a window are still traced |
+| 4 | `scripts/getBugzillaList.py` | `bugzilla_matched.jsonl`, `bugzilla_missing_ids.txt` | Fetches every Bugzilla bug referenced by the filtered commits and fix candidates |
 | 5 | `scripts/AIDetectionScripts/CommitsAIDetect.py` | `ai_candidates.csv` | Flags agent-signed and self-admitted AI commits for labelling |
 | 6 | `scripts/extract_features.py` | `commits_features.csv` | Kamei change metrics for every filtered commit (column names follow the replication package) |
-| 7 | `scripts/run_szz.py` | `final_dataset.csv`, `szz_report.json` | SZZ labelling of defect-inducing commits (WIP) |
+| 7 | `scripts/run_szz.py` | `final_dataset.csv`, `szz_report.json` | SZZ labelling of defect-inducing commits; the report counts every exclusion |
 
 Study windows and other parameters are set in `config.py`. Stage scripts import it as a top-level module, so to run a single stage, run it as a module from the project root:
 

@@ -2,7 +2,11 @@ import json
 import re
 from datetime import datetime, timezone
 
-from config import COMMITS_RAW, COMMITS_FILTERED, WINDOWS, BUG_RE
+from config import COMMITS_RAW, COMMITS_FILTERED, COMMITS_FIX_CANDIDATES, WINDOWS, BUG_RE
+
+# SZZ fix candidates have no upper date bound: a bug introduced inside a
+# window may only be fixed after it, and that fix must still be traced back.
+EARLIEST_START = min(since for since, _ in WINDOWS.values())
 
 
 def parse_iso8601(s):
@@ -16,7 +20,7 @@ def window_of(dt):
     return None
 
 
-FUNNEL = [
+QUALITY_FILTERS = [
     # Done by bots / imported automation
     ("wpt import", lambda c: "[wpt PR" in c["subject"]),
 
@@ -31,11 +35,33 @@ FUNNEL = [
 ]
 
 
+def run_funnel(commits, funnel):
+    kept = commits
+    for name, test in funnel:
+        survivors = []
+        removed = 0
+        for commit in kept:
+            if test(commit):
+                removed += 1
+            else:
+                survivors.append(commit)
+        kept = survivors
+        print(f"  {name:<18} -{removed:<8} remaining={len(kept)}")
+    return kept
+
+
+def write_commits(commits, path):
+    with open(path, "w", encoding="utf-8") as f:
+        for c in commits:
+            f.write(json.dumps(c, ensure_ascii=False) + "\n")
+
+
 def main():
     if not COMMITS_RAW.exists():
         raise FileNotFoundError(f"Missing input: {COMMITS_RAW}")
 
-    by_window = {name: [] for name in WINDOWS}
+    # Only commits from the earliest window start onward are needed, by either output
+    since_start = []
     n_raw = 0
     with open(COMMITS_RAW, encoding="utf-8") as f:
         for line in f:
@@ -43,40 +69,33 @@ def main():
                 continue
             n_raw += 1
             c = json.loads(line)
-            window = window_of(parse_iso8601(c["commit_date"]))
-            if window:
-                c["window"] = window
-                by_window[window].append(c)
+            dt = parse_iso8601(c["commit_date"])
+            if dt >= EARLIEST_START:
+                window = window_of(dt)
+                if window:
+                    c["window"] = window
+                since_start.append(c)
 
-    print(f"Loaded {n_raw} raw commits")
-    print(f"{'outside all windows':<20} -{n_raw - sum(map(len, by_window.values()))}")
+    print(f"Loaded {n_raw} raw commits, {len(since_start)} since {EARLIEST_START.date()}")
 
     kept_all = []
-    for window, kept in by_window.items():
-        since, until = WINDOWS[window]
+    for window, (since, until) in WINDOWS.items():
+        in_window = [c for c in since_start if c.get("window") == window]
         until_s = until.date() if until else "HEAD"
-        print(f"\n[{window}] {since.date()} .. {until_s}: {len(kept)} commits in window")
+        print(f"\n[{window}] {since.date()} .. {until_s}: {len(in_window)} commits in window")
 
-        for name, test in FUNNEL:
-            survivors = []
-            removed = 0
-            for commit in kept:
-                if test(commit):
-                    removed += 1
-                else:
-                    survivors.append(commit)
-            kept = survivors
-            print(f"  {name:<18} -{removed:<8} remaining={len(kept)}")
-
+        kept = run_funnel(in_window, QUALITY_FILTERS)
         if not kept:
             raise RuntimeError(f"Filtering produced no commits for window '{window}'")
         kept_all.extend(kept)
 
-    with open(COMMITS_FILTERED, "w", encoding="utf-8") as f:
-        for c in kept_all:
-            f.write(json.dumps(c, ensure_ascii=False) + "\n")
-
+    write_commits(kept_all, COMMITS_FILTERED)
     print(f"\nWrote {len(kept_all)} filtered commits to {COMMITS_FILTERED}")
+
+    print(f"\nSZZ fix candidates ({EARLIEST_START.date()} onward, no end date): {len(since_start)} commits")
+    candidates = run_funnel(since_start, QUALITY_FILTERS)
+    write_commits(candidates, COMMITS_FIX_CANDIDATES)
+    print(f"Wrote {len(candidates)} fix candidates to {COMMITS_FIX_CANDIDATES}")
 
 
 if __name__ == "__main__":

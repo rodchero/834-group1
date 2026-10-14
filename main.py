@@ -5,7 +5,8 @@ import sys
 import time
 
 from config import (
-    ROOT, COMMITS_RAW, NUMSTAT, COMMITS_FILTERED, BUGS_MATCHED, BUGS_MISSING_IDS,
+    ROOT, COMMITS_RAW, NUMSTAT, COMMITS_FILTERED, COMMITS_FIX_CANDIDATES,
+    BUGS_MATCHED, BUGS_MISSING_IDS,
     AI_CANDIDATES, FEATURES, FINAL_DATASET, SZZ_REPORT,
 )
 
@@ -16,7 +17,7 @@ PYTHON = sys.executable
 STAGES = [
     ("scripts.firefoxExtract", [COMMITS_RAW]),
     ("scripts.cache_numstat", [NUMSTAT]),
-    ("scripts.filterCommits", [COMMITS_FILTERED]),
+    ("scripts.filterCommits", [COMMITS_FILTERED, COMMITS_FIX_CANDIDATES]),
     ("scripts.getBugzillaList", [BUGS_MATCHED, BUGS_MISSING_IDS]),
     ("scripts.AIDetectionScripts.CommitsAIDetect", [AI_CANDIDATES]),
     ("scripts.extract_features", [FEATURES]),
