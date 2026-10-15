@@ -32,6 +32,7 @@ AI_TIERS = ARTIFACTS / "ai_tiers.csv"                         # hash -> AI evide
 FEATURES = ARTIFACTS / "commits_features.csv"
 FINAL_DATASET = ARTIFACTS / "final_dataset.csv"
 SZZ_REPORT = ARTIFACTS / "szz_report.json"
+BLAME_IGNORE_REVS = ARTIFACTS / "blame_ignore_revs.txt"       # Firefox's cosmetic commits, skipped by SZZ blame
 DATASETS_SUMMARY = ARTIFACTS / "datasets_summary.csv"         # size and defect rate per dataset
 
 # Replication package: the R scripts run from R_DIR and read ../input/<project>.csv,

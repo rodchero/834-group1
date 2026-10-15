@@ -9,7 +9,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 
 from config import (
-    REPO,
+    REPO, BUG_RE,
     COMMITS_RAW as RAW_COMMITS_IN,
     # Fixes are searched from the window start onward with no end date, so bugs
     # fixed after the window still label the in-window commit that caused them.
@@ -19,9 +19,9 @@ from config import (
     FINAL_DATASET as OUT,
     SZZ_REPORT as REPORT_OUT,
     MAX_WORKERS as BLAME_WORKERS,
+    BLAME_IGNORE_REVS,
 )
 
-BUG_RE = re.compile(r"\bbug\s*(\d+)\b", re.I)
 FIX_PATTERNS = [
     re.compile(r"^\s*bug\s+\d+\b", re.I),
     re.compile(r"^\s*fixed\s+bug\s+\d+\b", re.I),
@@ -30,6 +30,9 @@ FIX_PATTERNS = [
 ]
 
 _blame_range_cache = {}
+
+# Set in main(): blame skips Firefox's mass-formatting commits when the list exists
+IGNORE_REVS_ARGS = []
 
 
 def run_git(args):
@@ -79,11 +82,9 @@ def load_features(path):
 
 
 def extract_bug_ids(commit):
-    text = " ".join([
-        commit.get("subject", "") or "",
-        commit.get("message", "") or "",
-    ])
-    return [int(m.group(1)) for m in BUG_RE.finditer(text)]
+    # Subject only: the body often mentions other bugs ("regressed by bug X",
+    # "depends on bug Y") that this commit does not fix.
+    return [int(m.group(1)) for m in BUG_RE.finditer(commit.get("subject", "") or "")]
 
 
 def looks_like_fix_commit(commit):
@@ -193,34 +194,38 @@ def parse_deleted_lines_from_patch(commit_hash):
     deleted = []
     current_old_path = None
     old_line = None
+    in_hunk = False
 
     for line in out.splitlines():
-        if line.startswith("--- "):
-            path = line[4:].strip()
-            if path.startswith("a/"):
-                path = path[2:]
-            current_old_path = None if path == "/dev/null" else path
+        if line.startswith("diff --git "):
+            # Start of a file's header. Inside a hunk every line starts with
+            # "-", "+", " " or "\\", so this cannot be file content.
+            in_hunk = False
+            current_old_path = None
 
-        elif line.startswith("@@ "):
-            m = re.search(r"@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@", line)
-            if not m:
-                old_line = None
-                continue
-            old_start = int(m.group(1))
-            old_line = old_start
+        elif not in_hunk:
+            # Header lines; "--- " is only the old path here, never a deleted line
+            if line.startswith("--- "):
+                path = line[4:].strip()
+                if path.startswith("a/"):
+                    path = path[2:]
+                current_old_path = None if path == "/dev/null" else path
+            elif line.startswith("@@ "):
+                in_hunk = True
 
-        elif line.startswith("-") and not line.startswith("---"):
-            if current_old_path is not None and old_line is not None:
-                deleted.append((current_old_path, old_line, line[1:]))
-            if old_line is not None:
-                old_line += 1
-
-        elif line.startswith("+") and not line.startswith("+++"):
-            pass
-
-        else:
-            if old_line is not None and not line.startswith("\\"):
-                old_line += 1
+        if in_hunk:
+            if line.startswith("@@ "):
+                m = re.search(r"@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@", line)
+                old_line = int(m.group(1)) if m else None
+            elif line.startswith("-"):
+                if current_old_path is not None and old_line is not None:
+                    deleted.append((current_old_path, old_line, line[1:]))
+                if old_line is not None:
+                    old_line += 1
+            elif line.startswith(" "):
+                if old_line is not None:
+                    old_line += 1
+            # "+" lines and "\\ No newline at end of file" do not advance the old side
 
     return deleted
 
@@ -262,6 +267,7 @@ def blame_range(parent_hash, path, start, end):
         parent_hash,
         "-L", f"{start},{end}",
         "--porcelain",
+        *IGNORE_REVS_ARGS,
         "--",
         path
     ])
@@ -342,6 +348,20 @@ def trace_fix_commit(item, commit_dates, rejected_after_report, unknown_date):
     return "traced_to_inducing_commits", blamed, failed_ranges > 0
 
 
+def load_blame_ignore_revs():
+    """Extracts Firefox's .git-blame-ignore-revs (mass reformatting commits), so
+    blame looks past them to the commit that really wrote each line. The clone
+    has no checkout, so the file is read from HEAD."""
+    global IGNORE_REVS_ARGS
+    try:
+        BLAME_IGNORE_REVS.write_text(run_git(["show", "HEAD:.git-blame-ignore-revs"]), encoding="utf-8")
+    except subprocess.CalledProcessError:
+        print("[WARN] No .git-blame-ignore-revs at HEAD; blaming without it", flush=True)
+        return
+    IGNORE_REVS_ARGS = ["--ignore-revs-file", str(BLAME_IGNORE_REVS)]
+    print(f"Blame ignores the revisions in {BLAME_IGNORE_REVS}", flush=True)
+
+
 def run_szz(fix_commits, commit_dates, stats, blamed_stats):
     # Each validated fix commit is counted exactly once, under its outcome.
     # fix_commits_with_some_blame_failures is a flag and overlaps the outcomes.
@@ -416,6 +436,8 @@ def main():
         raise FileNotFoundError(f"Missing input file: {BUGS_IN}")
     if not FEATURES_IN.exists():
         raise FileNotFoundError(f"Missing input file: {FEATURES_IN}")
+
+    load_blame_ignore_revs()
 
     commits = load_commits(FIX_CANDIDATES_IN)
     bugs_by_id = load_bugs(BUGS_IN)
