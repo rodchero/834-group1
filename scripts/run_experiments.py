@@ -1,8 +1,8 @@
 """
 Run the replication package's R experiments (RQ1-RQ3) on every dataset.
 
-Datasets: input/mozilla_original.csv, then input/<dataset>.csv and
-input/<dataset>_<product>.csv for config.DATASETS and config.PRODUCTS.
+Datasets: input/mozilla_original.csv, then input/<dataset>.csv and every
+input/<dataset>_<product>.csv for config.DATASETS (written by build_datasets).
 Datasets with fewer than MIN_DEFECTIVE defective commits are skipped.
 
 R is called once per dataset and script (exeExperimentPred.r for RQ1/RQ2,
@@ -22,7 +22,7 @@ import time
 
 from config import (
     R_DIR, INPUT_DIR, OUTPUT_DIR, R_LOG_DIR, R_RESULTS, MOZILLA_ORIGINAL,
-    DATASETS, PRODUCTS, MIN_DEFECTIVE,
+    DATASETS, MIN_DEFECTIVE,
 )
 
 R_SCRIPTS = ["exeExperimentPred.r", "exeExperimentFactor.r"]
@@ -31,7 +31,7 @@ R_SCRIPTS = ["exeExperimentPred.r", "exeExperimentFactor.r"]
 def dataset_names():
     names = [MOZILLA_ORIGINAL]
     for name in DATASETS:
-        names += [name] + [f"{name}_{suffix}" for suffix in PRODUCTS]
+        names += [name] + sorted(p.stem for p in INPUT_DIR.glob(f"{name}_*.csv"))
     return names
 
 

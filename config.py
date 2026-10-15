@@ -67,7 +67,7 @@ RESOLVED_LABELS = LABELLING_DIR / "resolved_labels.csv"   # third-person decisio
 # AI evidence tiers: A = agent-authored, B = manually confirmed disclosure,
 # C = exposed (any later commit by a developer with an A or B commit), - = none.
 # Set True to also count AI_BORDERLINE labels as tier B seeds.
-EXPOSURE_INCLUDE_BORDERLINE = False
+EXPOSURE_INCLUDE_BORDERLINE = True
 
 # Replication datasets: name -> (window, tiers kept). Names become the R
 # project names, so input/<name>.csv and input/<name>_<product>.csv.
@@ -77,15 +77,9 @@ DATASETS = {
     "ff_ai": ("ai", {"A", "B", "C"}),
 }
 
-# Bugzilla products for the per-product models, the same for every dataset
-# (top 5 by bug count, see scripts/count_components.py). File suffix -> product.
-PRODUCTS = {
-    "core": "Core",
-    "firefox": "Firefox",
-    "android": "Firefox for Android",
-    "toolkit": "Toolkit",
-    "devtools": "DevTools",
-}
+# Per-product models: one for each of the N_PRODUCTS Bugzilla products with the
+# most commits in each dataset, so the products can differ between datasets
+N_PRODUCTS = 5
 
 # Thread pool size for git subprocess work (numstat caching, SZZ blame)
 MAX_WORKERS = min(16, os.cpu_count() or 4)

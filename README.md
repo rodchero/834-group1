@@ -57,7 +57,7 @@ Stages run in order. A stage is skipped when all of its outputs already exist in
 | 7 | `scripts/AIDetectionScripts/tag_exposure.py` | `ai_tiers.csv` | AI evidence tier per commit: A agent-authored, B confirmed disclosure, C exposed (later commits of a developer with an A/B commit), `-` none |
 | 8 | `scripts/extract_features.py` | `commits_features.csv` | Kamei change metrics for every filtered commit (column names follow the replication package). File history follows renames |
 | 9 | `scripts/run_szz.py` | `final_dataset.csv`, `szz_report.json` | SZZ labelling of defect-inducing commits; the report counts every exclusion |
-| 10 | `scripts/build_datasets.py` | `input/<dataset>[_<product>].csv`, `datasets_summary.csv` | Replication package inputs for each dataset in `config.DATASETS` (human: no AI evidence; AI: tiers A+B+C), general and per product in `config.PRODUCTS` |
+| 10 | `scripts/build_datasets.py` | `input/<dataset>[_<product>].csv`, `datasets_summary.csv` | Replication package inputs for each dataset in `config.DATASETS` (human: no AI evidence; AI: tiers A+B+C), general and one per product for the `N_PRODUCTS` (5) products with the most commits in that dataset |
 | 11 | `scripts/run_experiments.py` | `output/results_{pred,pred_effort,factor,factor_effort}.csv`, `output/logs/` | Runs the R experiments (RQ1–RQ3) once per dataset, `mozilla_original` first; skips datasets with fewer than `MIN_DEFECTIVE` defective commits |
 
 Study windows and other parameters are set in `config.py`. Stage scripts import it as a top-level module, so to run a single stage, run it as a module from the project root:
