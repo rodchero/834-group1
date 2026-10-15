@@ -12,6 +12,8 @@ Replication of Kamei et al., "A Large-Scale Empirical Study of Just-in-Time Qual
 | `scripts/AIDetectionScripts/` | AI-disclosure detection, manual labelling sheets and helpers |
 | `artifacts/` | Pipeline outputs. Gitignored except `commits_numstat.jsonl` (git lfs) |
 | `ReplicationPackageScript/` | R scripts from the paper's replication package (RQ1–RQ3 models) |
+| `input/` | Replication datasets, including the paper's `mozilla_original.csv` (git lfs) |
+| `output/` | R results and per-dataset logs (not tracked) |
 | `firefox/` | Local clone of the Firefox repo (not tracked, see Setup) |
 
 ## Setup
@@ -42,7 +44,7 @@ Replication of Kamei et al., "A Large-Scale Empirical Study of Just-in-Time Qual
 python main.py
 ```
 
-Stages run in order. A stage is skipped when all of its outputs already exist in `artifacts/`, so delete an artifact to regenerate it and everything that depends on it. The numstat cache and label merge stages always run (they are incremental or cheap). Each stage's runtime is printed, with a summary at the end. The Bugzilla stage takes a while, because requests are throttled on purpose.
+Stages run in order. A stage is skipped when all of its outputs already exist in `artifacts/`, so delete an artifact to regenerate it and everything that depends on it. The numstat cache, label merge, exposure and dataset build stages always run (they are incremental or cheap). Each stage's runtime is printed, with a summary at the end. The Bugzilla stage takes a while, because requests are throttled on purpose.
 
 | # | Stage | Output (`artifacts/`) | What it does |
 |---|---|---|---|
@@ -52,8 +54,11 @@ Stages run in order. A stage is skipped when all of its outputs already exist in
 | 4 | `scripts/getBugzillaList.py` | `bugzilla_matched.jsonl`, `bugzilla_missing_ids.txt` | Fetches every Bugzilla bug referenced by the filtered commits and fix candidates |
 | 5 | `scripts/AIDetectionScripts/CommitsAIDetect.py` | `ai_candidates.csv` | Flags agent-signed and self-admitted AI commits for labelling (Phabricator reviewer groups such as `r=ai-models-reviewers` are ignored) |
 | 6 | `scripts/AIDetectionScripts/merge_labels.py` | `ai_labels.csv`, `labelling_todo.csv`, `label_disagreements.csv` | Merges the raters' sheets by commit hash, prints Cohen's κ, lists rows still needing labels and unresolved disagreements |
-| 7 | `scripts/extract_features.py` | `commits_features.csv` | Kamei change metrics for every filtered commit (column names follow the replication package). File history follows renames |
-| 8 | `scripts/run_szz.py` | `final_dataset.csv`, `szz_report.json` | SZZ labelling of defect-inducing commits; the report counts every exclusion |
+| 7 | `scripts/AIDetectionScripts/tag_exposure.py` | `ai_tiers.csv` | AI evidence tier per commit: A agent-authored, B confirmed disclosure, C exposed (later commits of a developer with an A/B commit), `-` none |
+| 8 | `scripts/extract_features.py` | `commits_features.csv` | Kamei change metrics for every filtered commit (column names follow the replication package). File history follows renames |
+| 9 | `scripts/run_szz.py` | `final_dataset.csv`, `szz_report.json` | SZZ labelling of defect-inducing commits; the report counts every exclusion |
+| 10 | `scripts/build_datasets.py` | `input/<dataset>[_<product>].csv`, `datasets_summary.csv` | Replication package inputs for each dataset in `config.DATASETS` (human: no AI evidence; AI: tiers A+B+C), general and per product in `config.PRODUCTS` |
+| 11 | `scripts/run_experiments.py` | `output/results_{pred,pred_effort,factor,factor_effort}.csv`, `output/logs/` | Runs the R experiments (RQ1–RQ3) once per dataset, `mozilla_original` first; skips datasets with fewer than `MIN_DEFECTIVE` defective commits |
 
 Study windows and other parameters are set in `config.py`. Stage scripts import it as a top-level module, so to run a single stage, run it as a module from the project root:
 
@@ -75,16 +80,27 @@ To print the full message of a row, by old row id or by commit hash:
 python scripts/AIDetectionScripts/show_commit.py R0084 fa9c5cdb882a
 ```
 
-Still to come: tagging AI exposure per developer (`tag_exposure.py`), and building the final per-dataset CSVs in the replication package's input format.
 
 ## Replication package
 
-The R scripts in `ReplicationPackageScript/` need R and the `MASS` package (`install.packages("MASS")`). See `ReplicationPackageScript/ReadMe.txt` for how to run them.
+The R scripts in `ReplicationPackageScript/` need R (`Rscript` on the PATH), the `MASS` package (`install.packages("MASS")`) and Perl. The only change to them: the project list and output name are read from the `JIT_PROJECTS` and `JIT_TARGET` environment variables, defaulting to the paper's original projects. `run_experiments.py` sets them for one dataset at a time; to run a subset:
+
+```
+python -m scripts.run_experiments mozilla_original ff_ai
+```
+
+Combined results, one row per dataset:
+
+| File | Contents |
+|---|---|
+| `results_pred.csv` | RQ1: accuracy, precision, recall, F1, AUC (10-fold CV, undersampled) |
+| `results_pred_effort.csv` | RQ2: share of defects found at 20% effort and Popt, for LR and EALR |
+| `results_factor.csv` | RQ3: logistic regression odds ratios per metric (blank = removed by VIF/stepwise) |
+| `results_factor_effort.csv` | RQ3: EALR coefficients per metric |
+
+Each dataset's R console output is in `output/logs/<dataset>.log`.
 
 # TODO
 - finish AI labelling
-- choose products/components for the 10 sub-datasets
-- make a "build_datasets.py" script
-- automate replication package runner (could also be a python script)
 
 

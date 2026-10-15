@@ -7,7 +7,7 @@ import time
 from config import (
     ROOT, COMMITS_RAW, COMMITS_FILTERED, COMMITS_FIX_CANDIDATES,
     BUGS_MATCHED, BUGS_MISSING_IDS,
-    AI_CANDIDATES, FEATURES, FINAL_DATASET, SZZ_REPORT,
+    AI_CANDIDATES, FEATURES, FINAL_DATASET, SZZ_REPORT, R_RESULTS,
 )
 
 PYTHON = sys.executable
@@ -22,8 +22,11 @@ STAGES = [
     ("scripts.getBugzillaList", [BUGS_MATCHED, BUGS_MISSING_IDS]),
     ("scripts.AIDetectionScripts.CommitsAIDetect", [AI_CANDIDATES]),
     ("scripts.AIDetectionScripts.merge_labels", None),
+    ("scripts.AIDetectionScripts.tag_exposure", None),
     ("scripts.extract_features", [FEATURES]),
     ("scripts.run_szz", [FINAL_DATASET, SZZ_REPORT]),
+    ("scripts.build_datasets", None),
+    ("scripts.run_experiments", list(R_RESULTS.values())),
 ]
 
 

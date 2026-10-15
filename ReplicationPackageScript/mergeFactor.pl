@@ -3,7 +3,9 @@ use warnings;
 use Cwd;
 
 our @VARS    = ("ns","nm","nf","entropy","la","ld","lt","fix","ndev","pd","npt","exp","rexp","sexp");
-my @projects_oss = ("bugzilla", "columba", "jdt", "platform", "mozilla", "postgres");
+# Projects and output name can be set from the environment (see exeExperimentFactor.r)
+my @projects_oss = split(/,/, $ENV{JIT_PROJECTS} // "bugzilla,columba,jdt,platform,mozilla,postgres");
+my $target = lc($ENV{JIT_TARGET} // "oss");
 
 sub merge(){
   my ($arg1, $arg2) = @_; #arg1:oss or com    # arg2: conv or effort
@@ -28,7 +30,7 @@ sub merge(){
     return 0;
   }
   
-  my $resname = $DIR . "all_" . $arg1 . $NAME;
+  my $resname = $DIR . "all_" . $target . $NAME;
   open(OUT, ">$resname") or die ("Can not make: $resname\n");
 
   for(my $i=0;$i<=$#projects;$i++){

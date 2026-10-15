@@ -1,1 +1,2 @@
 artifacts/commits_numstat.jsonl filter=lfs diff=lfs merge=lfs -text
+input/*.csv filter=lfs diff=lfs merge=lfs -text

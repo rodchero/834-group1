@@ -12,8 +12,7 @@ firefox
 /.vscode/
 *.DS_Store
 
-# Replication package IO
-/input/
+# Replication package output (input/ datasets are tracked with git lfs)
 /output/
 
 # Other
