@@ -9,7 +9,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 
 from config import (
-    REPO, BUG_RE,
+    REPO, REPO_REF, BUG_RE, VENDORED_RE,
     COMMITS_RAW as RAW_COMMITS_IN,
     # Fixes are searched from the window start onward with no end date, so bugs
     # fixed after the window still label the in-window commit that caused them.
@@ -300,9 +300,15 @@ def trace_fix_commit(item, commit_dates, rejected_after_report, unknown_date):
         print(f"[WARN] Could not parse patch for fix commit {fix_hash}: {e}", flush=True)
         return "excluded_patch_parse_failure", set(), False
 
-    deleted_pairs = [(path, line_number) for path, line_number, _ in deleted_lines]
-    if not deleted_pairs:
+    if not deleted_lines:
         return "excluded_no_deleted_lines", set(), False
+
+    # Vendored lines blame back to the import commit, not to the change that
+    # introduced the defect (that happened upstream), so they are not traced.
+    deleted_pairs = [(path, line_number) for path, line_number, _ in deleted_lines
+                     if not VENDORED_RE.search(path)]
+    if not deleted_pairs:
+        return "excluded_only_vendored_deleted_lines", set(), False
 
     ranges_by_path = group_contiguous_lines(deleted_pairs)
 
@@ -351,12 +357,12 @@ def trace_fix_commit(item, commit_dates, rejected_after_report, unknown_date):
 def load_blame_ignore_revs():
     """Extracts Firefox's .git-blame-ignore-revs (mass reformatting commits), so
     blame looks past them to the commit that really wrote each line. The clone
-    has no checkout, so the file is read from HEAD."""
+    has no checkout, so the file is read from the pinned snapshot."""
     global IGNORE_REVS_ARGS
     try:
-        BLAME_IGNORE_REVS.write_text(run_git(["show", "HEAD:.git-blame-ignore-revs"]), encoding="utf-8")
+        BLAME_IGNORE_REVS.write_text(run_git(["show", f"{REPO_REF}:.git-blame-ignore-revs"]), encoding="utf-8")
     except subprocess.CalledProcessError:
-        print("[WARN] No .git-blame-ignore-revs at HEAD; blaming without it", flush=True)
+        print(f"[WARN] No .git-blame-ignore-revs at {REPO_REF}; blaming without it", flush=True)
         return
     IGNORE_REVS_ARGS = ["--ignore-revs-file", str(BLAME_IGNORE_REVS)]
     print(f"Blame ignores the revisions in {BLAME_IGNORE_REVS}", flush=True)

@@ -106,6 +106,10 @@ def load_commits(path):
             c["_dt"] = parse_iso8601(c["commit_date"])
             commits.append(c)
 
+    # Lando lands a stack of commits with one timestamp (8% of window commits
+    # share theirs). git log lists children before parents, so reverse first:
+    # the stable sort then keeps parents before children among equal dates.
+    commits.reverse()
     commits.sort(key=lambda c: c["_dt"])
     return commits
 
@@ -279,8 +283,8 @@ def main():
     history_key = {}
 
     file_developers = defaultdict(set)
-    file_change_count = defaultdict(int)
-    file_dev_change_count = defaultdict(int)
+    # history key -> (date, hash) of the file's last change, for AGE and NUC
+    file_last_change = {}
     dev_prior_commit_dates = defaultdict(list)
     subsystem_dev_count = defaultdict(int)
 
@@ -317,17 +321,23 @@ def main():
                 fix = fix_from_bugzilla(commit, bugs_by_id)
 
                 prior_devs = set()
-                prior_changes_per_file = []
-                prior_author_changes_per_file = []
+                ages = []
+                last_changes = set()
 
                 for key in keys:
                     prior_devs.update(file_developers[key])
-                    prior_changes_per_file.append(file_change_count[key])
-                    prior_author_changes_per_file.append(file_dev_change_count[(key, author)])
+                    last = file_last_change.get(key)
+                    if last:
+                        last_dt, last_hash = last
+                        ages.append(max(0.0, (commit_date - last_dt).total_seconds() / 86400.0))
+                        last_changes.add(last_hash)
 
                 ndev = len(prior_devs)
-                pd = sum(prior_changes_per_file) if prior_changes_per_file else 0
-                npt_raw = sum(prior_author_changes_per_file)
+                # AGE (pd): average days since each modified file was last changed.
+                # Files with no earlier change (new files) are left out.
+                pd = sum(ages) / len(ages) if ages else 0.0
+                # NUC (npt, divided by nf below): unique last changes of the modified files
+                npt_raw = len(last_changes)
 
                 exp = len(dev_prior_commit_dates[author])
 
@@ -369,8 +379,7 @@ def main():
 
             for key, (_, _, old, new) in zip(keys, numstat):
                 file_developers[key].add(author)
-                file_change_count[key] += 1
-                file_dev_change_count[(key, author)] += 1
+                file_last_change[key] = (commit_date, commit_hash)
                 if new != old:
                     history_key[new] = key
 

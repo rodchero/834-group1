@@ -11,6 +11,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 REPO = ROOT / "firefox"
+# Firefox snapshot the study uses (2026-10-08), so a newer clone gives the same
+# commits, fix candidates and blame-ignore list. The numstat cache matches it.
+REPO_REF = "098e537cc4338b343383540dd7e7907fece986b7"
 
 # Pipeline artifacts, in the order they are produced
 ARTIFACTS = ROOT / "artifacts"
@@ -19,6 +22,7 @@ ARTIFACTS.mkdir(exist_ok=True)
 COMMITS_RAW = ARTIFACTS / "commits_raw.jsonl"
 NUMSTAT = ARTIFACTS / "commits_numstat.jsonl"
 COMMITS_FILTERED = ARTIFACTS / "commits_filtered.jsonl"
+FILTER_REPORT = ARTIFACTS / "filter_report.json"              # commits removed by each filter
 # SZZ fix candidates: same quality filters, from the earliest window start
 # onward with no end date, so fixes landing after a window are still traced
 COMMITS_FIX_CANDIDATES = ARTIFACTS / "commits_fix_candidates.jsonl"
@@ -36,7 +40,8 @@ BLAME_IGNORE_REVS = ARTIFACTS / "blame_ignore_revs.txt"       # Firefox's cosmet
 DATASETS_SUMMARY = ARTIFACTS / "datasets_summary.csv"         # size and defect rate per dataset
 
 # Replication package: the R scripts run from R_DIR and read ../input/<project>.csv,
-# write ../output. Datasets in INPUT_DIR are kept in git (lfs); output is not.
+# write ../output. Datasets in INPUT_DIR are kept in git (lfs); of output/, only
+# the combined results and the R logs are.
 R_DIR = ROOT / "ReplicationPackageScript"
 INPUT_DIR = ROOT / "input"
 OUTPUT_DIR = ROOT / "output"
@@ -46,10 +51,12 @@ MOZILLA_ORIGINAL = "mozilla_original"                         # the paper's data
 # prediction, RQ3 logistic and effort-aware (EALR) coefficients
 R_RESULTS = {kind: OUTPUT_DIR / f"results_{kind}.csv"
              for kind in ("pred", "pred_effort", "factor", "factor_effort")}
-# Datasets with fewer defective commits are not modelled (too few to fit)
-MIN_DEFECTIVE = 20
+# Datasets with fewer defective commits are not modelled (too few to fit).
+# Results near this size are unstable: the package's AUC counts a test fold
+# without defective commits as 0, which pulls the average down.
+MIN_DEFECTIVE = 10
 
-# Study windows as [since, until). until=None means up to the clone's HEAD.
+# Study windows as [since, until). until=None means up to REPO_REF.
 # Every filtered commit is tagged with the name of the window it falls in.
 WINDOWS = {
     "human": (datetime(2024, 11, 1, tzinfo=timezone.utc),
@@ -92,3 +99,7 @@ BUGZILLA_SLEEP = 0.25
 
 # Bugzilla bug references in commit text, e.g. "Bug 1234567"
 BUG_RE = re.compile(r"\bbug\s*(\d+)\b", re.I)
+
+# Vendored third-party code (e.g. third_party/rust/...). Commits touching only
+# these paths are filtered out, and SZZ does not blame lines in them.
+VENDORED_RE = re.compile(r"(^|/)(third_party|vendor)/")

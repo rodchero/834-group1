@@ -6,14 +6,24 @@ firefox
 # Do not gitignore commits_numstat.jsonl (tracked with git lfs)
 /artifacts/*
 !/artifacts/commits_numstat.jsonl
+# Small reports kept for the write-up (exclusion counts, dataset sizes, labels, run log)
+!/artifacts/filter_report.json
+!/artifacts/szz_report.json
+!/artifacts/datasets_summary.csv
+!/artifacts/bugzilla_missing_ids.txt
+!/artifacts/ai_labels.csv
+!/artifacts/run_log.txt
 
 # Local config
 /.venv/
 /.vscode/
 *.DS_Store
 
-# Replication package output (input/ datasets are tracked with git lfs)
-/output/
+# Replication package output (input/ datasets are tracked with git lfs).
+# Only the combined results and the per-dataset R logs are kept.
+/output/*
+!/output/results_*.csv
+!/output/logs/
 
 # Other
 /data/

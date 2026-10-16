@@ -3,7 +3,7 @@
 import json
 import subprocess
 
-from config import REPO, COMMITS_RAW as OUT
+from config import REPO, REPO_REF, COMMITS_RAW as OUT
 
 FIELDS = ["%H", "%P", "%cI", "%ae", "%ce", "%s", "%B"]
 NAMES = ["hash", "parents", "commit_date", "author_email", "committer_email", "subject", "message"]
@@ -18,6 +18,7 @@ def main():
             "git", "-C", str(REPO), "log",
             "--no-merges",
             "--pretty=format:\x1e" + "\x1f".join(FIELDS),
+            REPO_REF,   # pinned snapshot, not whatever HEAD the clone has
         ],
         capture_output=True,
         text=True,
