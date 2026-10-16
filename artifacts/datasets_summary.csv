@@ -1,0 +1,13 @@
+dataset,window,product,commits,defective,defect_rate
+ff_human,human,(all),37895,7638,0.2016
+ff_human_core,human,Core,18672,3499,0.1874
+ff_human_firefox,human,Firefox,5569,1484,0.2665
+ff_human_firefox_for_android,human,Firefox for Android,4058,951,0.2344
+ff_human_toolkit,human,Toolkit,2652,449,0.1693
+ff_human_devtools,human,DevTools,1350,212,0.1570
+ff_ai,ai,(all),3071,234,0.0762
+ff_ai_core,ai,Core,1707,111,0.0650
+ff_ai_firefox_build_system,ai,Firefox Build System,518,35,0.0676
+ff_ai_firefox,ai,Firefox,256,35,0.1367
+ff_ai_release_engineering,ai,Release Engineering,147,14,0.0952
+ff_ai_toolkit,ai,Toolkit,109,17,0.1560

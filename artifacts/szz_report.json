@@ -1,0 +1,25 @@
+{
+  "fix_commit_search": {
+    "unit": "candidate commits, each counted once under the first check it fails",
+    "candidate_commits": 85935,
+    "excluded_non_defect_bug": 54544,
+    "excluded_bugs_missing_from_bugzilla": 1277,
+    "excluded_meta_bug": 139,
+    "excluded_not_fix_like": 27,
+    "validated_fix_commits": 29948
+  },
+  "szz_tracing": {
+    "unit": "validated fix commits, each counted once under its outcome (fix_commits_with_some_blame_failures overlaps the outcomes)",
+    "validated_fix_commits": 29948,
+    "traced_to_inducing_commits": 20039,
+    "excluded_no_deleted_lines": 5468,
+    "no_inducing_commit_found": 4423,
+    "excluded_only_vendored_deleted_lines": 18
+  },
+  "blamed_commits": {
+    "unit": "unique commits blamed by SZZ",
+    "inducing_commits": 47721,
+    "rejected_after_bug_report": 8814,
+    "unknown_commit_date": 9
+  }
+}

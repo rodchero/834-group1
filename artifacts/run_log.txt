@@ -1,0 +1,1963 @@
+
+=== Running scripts.firefoxExtract ===
+974803 commits
+Path: /home/roman/834-group1/artifacts/commits_raw.jsonl
+--- scripts.firefoxExtract return code: 0, took 0:00:14 ---
+
+=== Running scripts.cache_numstat ===
+975926 commits already cached, 0 to add
+--- scripts.cache_numstat return code: 0, took 0:00:04 ---
+
+=== Running scripts.filterCommits ===
+Loaded 974803 raw commits, 120058 since 2024-11-01
+6746 of them change only vendored code
+
+[human] 2024-11-01 .. 2025-11-01: 53282 commits in window
+  wpt import         -6897     remaining=46385
+  backout            -3468     remaining=42917
+  third-party        -2402     remaining=40515
+  vendored only      -460      remaining=40055
+  no bug ID          -1964     remaining=38091
+
+[ai] 2025-11-01 .. 2026-10-01: 64901 commits in window
+  wpt import         -7893     remaining=57008
+  backout            -4573     remaining=52435
+  third-party        -3455     remaining=48980
+  vendored only      -389      remaining=48591
+  no bug ID          -1929     remaining=46662
+
+Wrote 84753 filtered commits to /home/roman/834-group1/artifacts/commits_filtered.jsonl
+
+SZZ fix candidates (2024-11-01 onward, no end date): 120058 commits
+  wpt import         -15183    remaining=104875
+  backout            -8133     remaining=96742
+  third-party        -6013     remaining=90729
+  vendored only      -855      remaining=89874
+  no bug ID          -3939     remaining=85935
+Wrote 85935 fix candidates to /home/roman/834-group1/artifacts/commits_fix_candidates.jsonl
+Wrote filter counts to /home/roman/834-group1/artifacts/filter_report.json
+--- scripts.filterCommits return code: 0, took 0:00:05 ---
+
+=== Running scripts.getBugzillaList ===
+Loading bug IDs from commits...
+Loaded 85935 unique commits
+Found 49482 unique bug IDs
+Fetching batch 1/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 2/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 3/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 4/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 5/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 6/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 7/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 8/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 9/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 10/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 11/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 12/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 13/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 14/248 (200 bug IDs)
+  returned 198 bugs
+Fetching batch 15/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 16/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 17/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 18/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 19/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 20/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 21/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 22/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 23/248 (200 bug IDs)
+  returned 197 bugs
+Fetching batch 24/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 25/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 26/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 27/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 28/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 29/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 30/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 31/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 32/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 33/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 34/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 35/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 36/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 37/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 38/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 39/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 40/248 (200 bug IDs)
+  returned 197 bugs
+Fetching batch 41/248 (200 bug IDs)
+  returned 197 bugs
+Fetching batch 42/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 43/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 44/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 45/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 46/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 47/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 48/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 49/248 (200 bug IDs)
+  returned 198 bugs
+Fetching batch 50/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 51/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 52/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 53/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 54/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 55/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 56/248 (200 bug IDs)
+  returned 197 bugs
+Fetching batch 57/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 58/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 59/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 60/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 61/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 62/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 63/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 64/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 65/248 (200 bug IDs)
+  returned 198 bugs
+Fetching batch 66/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 67/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 68/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 69/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 70/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 71/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 72/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 73/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 74/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 75/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 76/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 77/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 78/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 79/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 80/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 81/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 82/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 83/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 84/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 85/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 86/248 (200 bug IDs)
+  returned 197 bugs
+Fetching batch 87/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 88/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 89/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 90/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 91/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 92/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 93/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 94/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 95/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 96/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 97/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 98/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 99/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 100/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 101/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 102/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 103/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 104/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 105/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 106/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 107/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 108/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 109/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 110/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 111/248 (200 bug IDs)
+  returned 197 bugs
+Fetching batch 112/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 113/248 (200 bug IDs)
+  returned 197 bugs
+Fetching batch 114/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 115/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 116/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 117/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 118/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 119/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 120/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 121/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 122/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 123/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 124/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 125/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 126/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 127/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 128/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 129/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 130/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 131/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 132/248 (200 bug IDs)
+  returned 198 bugs
+Fetching batch 133/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 134/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 135/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 136/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 137/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 138/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 139/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 140/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 141/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 142/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 143/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 144/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 145/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 146/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 147/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 148/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 149/248 (200 bug IDs)
+  returned 196 bugs
+Fetching batch 150/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 151/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 152/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 153/248 (200 bug IDs)
+  returned 198 bugs
+Fetching batch 154/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 155/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 156/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 157/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 158/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 159/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 160/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 161/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 162/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 163/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 164/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 165/248 (200 bug IDs)
+  returned 197 bugs
+Fetching batch 166/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 167/248 (200 bug IDs)
+  returned 198 bugs
+Fetching batch 168/248 (200 bug IDs)
+  returned 196 bugs
+Fetching batch 169/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 170/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 171/248 (200 bug IDs)
+  returned 198 bugs
+Fetching batch 172/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 173/248 (200 bug IDs)
+  returned 198 bugs
+Fetching batch 174/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 175/248 (200 bug IDs)
+  returned 197 bugs
+Fetching batch 176/248 (200 bug IDs)
+  returned 198 bugs
+Fetching batch 177/248 (200 bug IDs)
+  returned 196 bugs
+Fetching batch 178/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 179/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 180/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 181/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 182/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 183/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 184/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 185/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 186/248 (200 bug IDs)
+  returned 197 bugs
+Fetching batch 187/248 (200 bug IDs)
+  returned 198 bugs
+Fetching batch 188/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 189/248 (200 bug IDs)
+  returned 197 bugs
+Fetching batch 190/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 191/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 192/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 193/248 (200 bug IDs)
+  returned 200 bugs
+Fetching batch 194/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 195/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 196/248 (200 bug IDs)
+  returned 196 bugs
+Fetching batch 197/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 198/248 (200 bug IDs)
+  returned 196 bugs
+Fetching batch 199/248 (200 bug IDs)
+  returned 197 bugs
+Fetching batch 200/248 (200 bug IDs)
+  returned 195 bugs
+Fetching batch 201/248 (200 bug IDs)
+  returned 190 bugs
+Fetching batch 202/248 (200 bug IDs)
+  returned 184 bugs
+Fetching batch 203/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 204/248 (200 bug IDs)
+  returned 196 bugs
+Fetching batch 205/248 (200 bug IDs)
+  returned 197 bugs
+Fetching batch 206/248 (200 bug IDs)
+  returned 197 bugs
+Fetching batch 207/248 (200 bug IDs)
+  returned 192 bugs
+Fetching batch 208/248 (200 bug IDs)
+  returned 189 bugs
+Fetching batch 209/248 (200 bug IDs)
+  returned 195 bugs
+Fetching batch 210/248 (200 bug IDs)
+  returned 189 bugs
+Fetching batch 211/248 (200 bug IDs)
+  returned 196 bugs
+Fetching batch 212/248 (200 bug IDs)
+  returned 191 bugs
+Fetching batch 213/248 (200 bug IDs)
+  returned 195 bugs
+Fetching batch 214/248 (200 bug IDs)
+  returned 174 bugs
+Fetching batch 215/248 (200 bug IDs)
+  returned 193 bugs
+Fetching batch 216/248 (200 bug IDs)
+  returned 155 bugs
+Fetching batch 217/248 (200 bug IDs)
+  returned 183 bugs
+Fetching batch 218/248 (200 bug IDs)
+  returned 195 bugs
+Fetching batch 219/248 (200 bug IDs)
+  returned 174 bugs
+Fetching batch 220/248 (200 bug IDs)
+  returned 188 bugs
+Fetching batch 221/248 (200 bug IDs)
+  returned 177 bugs
+Fetching batch 222/248 (200 bug IDs)
+  returned 158 bugs
+Fetching batch 223/248 (200 bug IDs)
+  returned 169 bugs
+Fetching batch 224/248 (200 bug IDs)
+  returned 181 bugs
+Fetching batch 225/248 (200 bug IDs)
+  returned 182 bugs
+Fetching batch 226/248 (200 bug IDs)
+  returned 169 bugs
+Fetching batch 227/248 (200 bug IDs)
+  returned 190 bugs
+Fetching batch 228/248 (200 bug IDs)
+  returned 193 bugs
+Fetching batch 229/248 (200 bug IDs)
+  returned 188 bugs
+Fetching batch 230/248 (200 bug IDs)
+  returned 191 bugs
+Fetching batch 231/248 (200 bug IDs)
+  returned 199 bugs
+Fetching batch 232/248 (200 bug IDs)
+  returned 193 bugs
+Fetching batch 233/248 (200 bug IDs)
+  returned 193 bugs
+Fetching batch 234/248 (200 bug IDs)
+  returned 196 bugs
+Fetching batch 235/248 (200 bug IDs)
+  returned 186 bugs
+Fetching batch 236/248 (200 bug IDs)
+  returned 147 bugs
+Fetching batch 237/248 (200 bug IDs)
+  returned 196 bugs
+Fetching batch 238/248 (200 bug IDs)
+  returned 186 bugs
+Fetching batch 239/248 (200 bug IDs)
+  returned 195 bugs
+Fetching batch 240/248 (200 bug IDs)
+  returned 196 bugs
+Fetching batch 241/248 (200 bug IDs)
+  returned 193 bugs
+Fetching batch 242/248 (200 bug IDs)
+  returned 182 bugs
+Fetching batch 243/248 (200 bug IDs)
+  returned 184 bugs
+Fetching batch 244/248 (200 bug IDs)
+  returned 177 bugs
+Fetching batch 245/248 (200 bug IDs)
+  returned 189 bugs
+Fetching batch 246/248 (200 bug IDs)
+  returned 178 bugs
+Fetching batch 247/248 (200 bug IDs)
+  returned 189 bugs
+Fetching batch 248/248 (82 bug IDs)
+  returned 72 bugs
+
+Wrote 48675 found bugs to /home/roman/834-group1/artifacts/bugzilla_matched.jsonl
+Wrote 807 missing bug IDs to /home/roman/834-group1/artifacts/bugzilla_missing_ids.txt
+
+Some referenced bug IDs were not returned by Bugzilla.
+Possible reasons:
+- malformed bug ID extraction from commit text
+- restricted/deleted/unavailable Bugzilla records
+- transient API issues
+--- scripts.getBugzillaList return code: 0, took 0:08:24 ---
+
+=== Running scripts.AIDetectionScripts.CommitsAIDetect ===
+human: 38091 commits
+  agent-authored 12   {'claude-code': 12}
+  self-admitted  196   pre-tagged {'FP_FEATURE?': 34, 'FP_NOISE?': 10}
+      47  cursor
+      44  ai
+      28  created by
+      19  generated by
+      10  written by
+      7  openai
+      6  written with
+      6  created with
+    components:
+      31  Core :: Machine Learning: General
+      11  Web Compatibility :: Site Reports
+      11  Core :: Widget: Cocoa
+      8  Core :: Layout
+      6  Core :: DOM: UI Events & Focus Handling
+      6  DevTools :: Debugger
+      5  Core :: DOM: Events
+      4  Developer Infrastructure :: Lint and Formatting
+ai: 46662 commits
+  agent-authored 16   {'claude-code': 15, 'copilot': 1}
+  self-admitted  786   pre-tagged {'FP_FEATURE?': 290, 'FP_NOISE?': 59, 'FP_TOOLING?': 25}
+      391  ai
+      71  cursor
+      65  claude
+      61  generated by
+      41  llm
+      39  created by
+      29  written by
+      27  generated with
+    components:
+      236  Core :: Machine Learning: Frontend
+      40  Core :: Machine Learning: General
+      39  Firefox :: Settings UI
+      34  Developer Infrastructure :: Source Code Analysis
+      26  Developer Infrastructure :: AI for Development
+      22  Core :: Audio/Video: Playback
+      21  Firefox for Android :: Browser Engine
+      15  Core :: JavaScript Engine
+
+Wrote 1010 candidates to /home/roman/834-group1/artifacts/ai_candidates.csv
+--- scripts.AIDetectionScripts.CommitsAIDetect return code: 0, took 0:00:06 ---
+
+=== Running scripts.AIDetectionScripts.merge_labels ===
+Rater sheets:
+  labelling_sheet_E_batch2.csv: rater E, 393/993 rows labelled
+  labelling_sheet_JEV_batch2.csv: rater JEV, 993/993 rows labelled
+  labelling_sheet_T.csv: rater T, 799/799 rows labelled
+  210 labelled rows are no longer candidates and are ignored
+
+Cohen's kappa (rows labelled by both raters, current candidates only):
+  E vs JEV: n=391  collapsed=0.799  AI_DISCLOSED-vs-rest=1.000
+  E vs T: no shared rows
+  JEV vs T: n=591  collapsed=0.915  AI_DISCLOSED-vs-rest=0.934
+
+Final label sources: {'agreed': 974, 'auto': 28, 'resolved': 8}
+Final labels: {'FP': 85, 'FP_NOISE': 398, 'FP_FEATURE': 418, 'AI_DISCLOSED': 33, 'AGENT_AUTHORED': 28, 'FP_OTHER': 1, 'FP_TOOLING': 34, 'AI_BORDERLINE': 13}
+
+Wrote 1010 rows to /home/roman/834-group1/artifacts/ai_labels.csv
+Wrote 0 rows needing more labels to /home/roman/834-group1/artifacts/labelling_todo.csv
+Wrote 0 unresolved disagreements to /home/roman/834-group1/artifacts/label_disagreements.csv
+--- scripts.AIDetectionScripts.merge_labels return code: 0, took 0:00:00 ---
+
+=== Running scripts.AIDetectionScripts.tag_exposure ===
+Seeds: 28 tier A (signed), 46 tier B (confirmed), AI_BORDERLINE included
+25 developers have an adoption point
+Wrote 84753 rows to /home/roman/834-group1/artifacts/ai_tiers.csv
+
+window         A       B       C       -
+human         12       6     178   37895
+ai            16      40    3015   43591
+  A = agent-signed, B = self-admitted (confirmed), C = ai_exposed, - = no evidence
+
+20 developers contribute tier C commits; top 5:
+     631 (20%)  ahochheiden@mozilla.com
+     588 (18%)  emilio@crisal.io
+     259 (8%)  mstriemer@mozilla.com
+     237 (7%)  jdemooij@mozilla.com
+     201 (6%)  jkew@mozilla.com
+--- scripts.AIDetectionScripts.tag_exposure return code: 0, took 0:00:01 ---
+
+=== Running scripts.extract_features ===
+Scanned 1000/974803 commits, emitted 0 target rows
+Scanned 2000/974803 commits, emitted 0 target rows
+Scanned 3000/974803 commits, emitted 0 target rows
+Scanned 4000/974803 commits, emitted 0 target rows
+Scanned 5000/974803 commits, emitted 0 target rows
+Scanned 6000/974803 commits, emitted 0 target rows
+Scanned 7000/974803 commits, emitted 0 target rows
+Scanned 8000/974803 commits, emitted 0 target rows
+Scanned 9000/974803 commits, emitted 0 target rows
+Scanned 10000/974803 commits, emitted 0 target rows
+Scanned 11000/974803 commits, emitted 0 target rows
+Scanned 12000/974803 commits, emitted 0 target rows
+Scanned 13000/974803 commits, emitted 0 target rows
+Scanned 14000/974803 commits, emitted 0 target rows
+Scanned 15000/974803 commits, emitted 0 target rows
+Scanned 16000/974803 commits, emitted 0 target rows
+Scanned 17000/974803 commits, emitted 0 target rows
+Scanned 18000/974803 commits, emitted 0 target rows
+Scanned 19000/974803 commits, emitted 0 target rows
+Scanned 20000/974803 commits, emitted 0 target rows
+Scanned 21000/974803 commits, emitted 0 target rows
+Scanned 22000/974803 commits, emitted 0 target rows
+Scanned 23000/974803 commits, emitted 0 target rows
+Scanned 24000/974803 commits, emitted 0 target rows
+Scanned 25000/974803 commits, emitted 0 target rows
+Scanned 26000/974803 commits, emitted 0 target rows
+Scanned 27000/974803 commits, emitted 0 target rows
+Scanned 28000/974803 commits, emitted 0 target rows
+Scanned 29000/974803 commits, emitted 0 target rows
+Scanned 30000/974803 commits, emitted 0 target rows
+Scanned 31000/974803 commits, emitted 0 target rows
+Scanned 32000/974803 commits, emitted 0 target rows
+Scanned 33000/974803 commits, emitted 0 target rows
+Scanned 34000/974803 commits, emitted 0 target rows
+Scanned 35000/974803 commits, emitted 0 target rows
+Scanned 36000/974803 commits, emitted 0 target rows
+Scanned 37000/974803 commits, emitted 0 target rows
+Scanned 38000/974803 commits, emitted 0 target rows
+Scanned 39000/974803 commits, emitted 0 target rows
+Scanned 40000/974803 commits, emitted 0 target rows
+Scanned 41000/974803 commits, emitted 0 target rows
+Scanned 42000/974803 commits, emitted 0 target rows
+Scanned 43000/974803 commits, emitted 0 target rows
+Scanned 44000/974803 commits, emitted 0 target rows
+Scanned 45000/974803 commits, emitted 0 target rows
+Scanned 46000/974803 commits, emitted 0 target rows
+Scanned 47000/974803 commits, emitted 0 target rows
+Scanned 48000/974803 commits, emitted 0 target rows
+Scanned 49000/974803 commits, emitted 0 target rows
+Scanned 50000/974803 commits, emitted 0 target rows
+Scanned 51000/974803 commits, emitted 0 target rows
+Scanned 52000/974803 commits, emitted 0 target rows
+Scanned 53000/974803 commits, emitted 0 target rows
+Scanned 54000/974803 commits, emitted 0 target rows
+Scanned 55000/974803 commits, emitted 0 target rows
+Scanned 56000/974803 commits, emitted 0 target rows
+Scanned 57000/974803 commits, emitted 0 target rows
+Scanned 58000/974803 commits, emitted 0 target rows
+Scanned 59000/974803 commits, emitted 0 target rows
+Scanned 60000/974803 commits, emitted 0 target rows
+Scanned 61000/974803 commits, emitted 0 target rows
+Scanned 62000/974803 commits, emitted 0 target rows
+Scanned 63000/974803 commits, emitted 0 target rows
+Scanned 64000/974803 commits, emitted 0 target rows
+Scanned 65000/974803 commits, emitted 0 target rows
+Scanned 66000/974803 commits, emitted 0 target rows
+Scanned 67000/974803 commits, emitted 0 target rows
+Scanned 68000/974803 commits, emitted 0 target rows
+Scanned 69000/974803 commits, emitted 0 target rows
+Scanned 70000/974803 commits, emitted 0 target rows
+Scanned 71000/974803 commits, emitted 0 target rows
+Scanned 72000/974803 commits, emitted 0 target rows
+Scanned 73000/974803 commits, emitted 0 target rows
+Scanned 74000/974803 commits, emitted 0 target rows
+Scanned 75000/974803 commits, emitted 0 target rows
+Scanned 76000/974803 commits, emitted 0 target rows
+Scanned 77000/974803 commits, emitted 0 target rows
+Scanned 78000/974803 commits, emitted 0 target rows
+Scanned 79000/974803 commits, emitted 0 target rows
+Scanned 80000/974803 commits, emitted 0 target rows
+Scanned 81000/974803 commits, emitted 0 target rows
+Scanned 82000/974803 commits, emitted 0 target rows
+Scanned 83000/974803 commits, emitted 0 target rows
+Scanned 84000/974803 commits, emitted 0 target rows
+Scanned 85000/974803 commits, emitted 0 target rows
+Scanned 86000/974803 commits, emitted 0 target rows
+Scanned 87000/974803 commits, emitted 0 target rows
+Scanned 88000/974803 commits, emitted 0 target rows
+Scanned 89000/974803 commits, emitted 0 target rows
+Scanned 90000/974803 commits, emitted 0 target rows
+Scanned 91000/974803 commits, emitted 0 target rows
+Scanned 92000/974803 commits, emitted 0 target rows
+Scanned 93000/974803 commits, emitted 0 target rows
+Scanned 94000/974803 commits, emitted 0 target rows
+Scanned 95000/974803 commits, emitted 0 target rows
+Scanned 96000/974803 commits, emitted 0 target rows
+Scanned 97000/974803 commits, emitted 0 target rows
+Scanned 98000/974803 commits, emitted 0 target rows
+Scanned 99000/974803 commits, emitted 0 target rows
+Scanned 100000/974803 commits, emitted 0 target rows
+Scanned 101000/974803 commits, emitted 0 target rows
+Scanned 102000/974803 commits, emitted 0 target rows
+Scanned 103000/974803 commits, emitted 0 target rows
+Scanned 104000/974803 commits, emitted 0 target rows
+Scanned 105000/974803 commits, emitted 0 target rows
+Scanned 106000/974803 commits, emitted 0 target rows
+Scanned 107000/974803 commits, emitted 0 target rows
+Scanned 108000/974803 commits, emitted 0 target rows
+Scanned 109000/974803 commits, emitted 0 target rows
+Scanned 110000/974803 commits, emitted 0 target rows
+Scanned 111000/974803 commits, emitted 0 target rows
+Scanned 112000/974803 commits, emitted 0 target rows
+Scanned 113000/974803 commits, emitted 0 target rows
+Scanned 114000/974803 commits, emitted 0 target rows
+Scanned 115000/974803 commits, emitted 0 target rows
+Scanned 116000/974803 commits, emitted 0 target rows
+Scanned 117000/974803 commits, emitted 0 target rows
+Scanned 118000/974803 commits, emitted 0 target rows
+Scanned 119000/974803 commits, emitted 0 target rows
+Scanned 120000/974803 commits, emitted 0 target rows
+Scanned 121000/974803 commits, emitted 0 target rows
+Scanned 122000/974803 commits, emitted 0 target rows
+Scanned 123000/974803 commits, emitted 0 target rows
+Scanned 124000/974803 commits, emitted 0 target rows
+Scanned 125000/974803 commits, emitted 0 target rows
+Scanned 126000/974803 commits, emitted 0 target rows
+Scanned 127000/974803 commits, emitted 0 target rows
+Scanned 128000/974803 commits, emitted 0 target rows
+Scanned 129000/974803 commits, emitted 0 target rows
+Scanned 130000/974803 commits, emitted 0 target rows
+Scanned 131000/974803 commits, emitted 0 target rows
+Scanned 132000/974803 commits, emitted 0 target rows
+Scanned 133000/974803 commits, emitted 0 target rows
+Scanned 134000/974803 commits, emitted 0 target rows
+Scanned 135000/974803 commits, emitted 0 target rows
+Scanned 136000/974803 commits, emitted 0 target rows
+Scanned 137000/974803 commits, emitted 0 target rows
+Scanned 138000/974803 commits, emitted 0 target rows
+Scanned 139000/974803 commits, emitted 0 target rows
+Scanned 140000/974803 commits, emitted 0 target rows
+Scanned 141000/974803 commits, emitted 0 target rows
+Scanned 142000/974803 commits, emitted 0 target rows
+Scanned 143000/974803 commits, emitted 0 target rows
+Scanned 144000/974803 commits, emitted 0 target rows
+Scanned 145000/974803 commits, emitted 0 target rows
+Scanned 146000/974803 commits, emitted 0 target rows
+Scanned 147000/974803 commits, emitted 0 target rows
+Scanned 148000/974803 commits, emitted 0 target rows
+Scanned 149000/974803 commits, emitted 0 target rows
+Scanned 150000/974803 commits, emitted 0 target rows
+Scanned 151000/974803 commits, emitted 0 target rows
+Scanned 152000/974803 commits, emitted 0 target rows
+Scanned 153000/974803 commits, emitted 0 target rows
+Scanned 154000/974803 commits, emitted 0 target rows
+Scanned 155000/974803 commits, emitted 0 target rows
+Scanned 156000/974803 commits, emitted 0 target rows
+Scanned 157000/974803 commits, emitted 0 target rows
+Scanned 158000/974803 commits, emitted 0 target rows
+Scanned 159000/974803 commits, emitted 0 target rows
+Scanned 160000/974803 commits, emitted 0 target rows
+Scanned 161000/974803 commits, emitted 0 target rows
+Scanned 162000/974803 commits, emitted 0 target rows
+Scanned 163000/974803 commits, emitted 0 target rows
+Scanned 164000/974803 commits, emitted 0 target rows
+Scanned 165000/974803 commits, emitted 0 target rows
+Scanned 166000/974803 commits, emitted 0 target rows
+Scanned 167000/974803 commits, emitted 0 target rows
+Scanned 168000/974803 commits, emitted 0 target rows
+Scanned 169000/974803 commits, emitted 0 target rows
+Scanned 170000/974803 commits, emitted 0 target rows
+Scanned 171000/974803 commits, emitted 0 target rows
+Scanned 172000/974803 commits, emitted 0 target rows
+Scanned 173000/974803 commits, emitted 0 target rows
+Scanned 174000/974803 commits, emitted 0 target rows
+Scanned 175000/974803 commits, emitted 0 target rows
+Scanned 176000/974803 commits, emitted 0 target rows
+Scanned 177000/974803 commits, emitted 0 target rows
+Scanned 178000/974803 commits, emitted 0 target rows
+Scanned 179000/974803 commits, emitted 0 target rows
+Scanned 180000/974803 commits, emitted 0 target rows
+Scanned 181000/974803 commits, emitted 0 target rows
+Scanned 182000/974803 commits, emitted 0 target rows
+Scanned 183000/974803 commits, emitted 0 target rows
+Scanned 184000/974803 commits, emitted 0 target rows
+Scanned 185000/974803 commits, emitted 0 target rows
+Scanned 186000/974803 commits, emitted 0 target rows
+Scanned 187000/974803 commits, emitted 0 target rows
+Scanned 188000/974803 commits, emitted 0 target rows
+Scanned 189000/974803 commits, emitted 0 target rows
+Scanned 190000/974803 commits, emitted 0 target rows
+Scanned 191000/974803 commits, emitted 0 target rows
+Scanned 192000/974803 commits, emitted 0 target rows
+Scanned 193000/974803 commits, emitted 0 target rows
+Scanned 194000/974803 commits, emitted 0 target rows
+Scanned 195000/974803 commits, emitted 0 target rows
+Scanned 196000/974803 commits, emitted 0 target rows
+Scanned 197000/974803 commits, emitted 0 target rows
+Scanned 198000/974803 commits, emitted 0 target rows
+Scanned 199000/974803 commits, emitted 0 target rows
+Scanned 200000/974803 commits, emitted 0 target rows
+Scanned 201000/974803 commits, emitted 0 target rows
+Scanned 202000/974803 commits, emitted 0 target rows
+Scanned 203000/974803 commits, emitted 0 target rows
+Scanned 204000/974803 commits, emitted 0 target rows
+Scanned 205000/974803 commits, emitted 0 target rows
+Scanned 206000/974803 commits, emitted 0 target rows
+Scanned 207000/974803 commits, emitted 0 target rows
+Scanned 208000/974803 commits, emitted 0 target rows
+Scanned 209000/974803 commits, emitted 0 target rows
+Scanned 210000/974803 commits, emitted 0 target rows
+Scanned 211000/974803 commits, emitted 0 target rows
+Scanned 212000/974803 commits, emitted 0 target rows
+Scanned 213000/974803 commits, emitted 0 target rows
+Scanned 214000/974803 commits, emitted 0 target rows
+Scanned 215000/974803 commits, emitted 0 target rows
+Scanned 216000/974803 commits, emitted 0 target rows
+Scanned 217000/974803 commits, emitted 0 target rows
+Scanned 218000/974803 commits, emitted 0 target rows
+Scanned 219000/974803 commits, emitted 0 target rows
+Scanned 220000/974803 commits, emitted 0 target rows
+Scanned 221000/974803 commits, emitted 0 target rows
+Scanned 222000/974803 commits, emitted 0 target rows
+Scanned 223000/974803 commits, emitted 0 target rows
+Scanned 224000/974803 commits, emitted 0 target rows
+Scanned 225000/974803 commits, emitted 0 target rows
+Scanned 226000/974803 commits, emitted 0 target rows
+Scanned 227000/974803 commits, emitted 0 target rows
+Scanned 228000/974803 commits, emitted 0 target rows
+Scanned 229000/974803 commits, emitted 0 target rows
+Scanned 230000/974803 commits, emitted 0 target rows
+Scanned 231000/974803 commits, emitted 0 target rows
+Scanned 232000/974803 commits, emitted 0 target rows
+Scanned 233000/974803 commits, emitted 0 target rows
+Scanned 234000/974803 commits, emitted 0 target rows
+Scanned 235000/974803 commits, emitted 0 target rows
+Scanned 236000/974803 commits, emitted 0 target rows
+Scanned 237000/974803 commits, emitted 0 target rows
+Scanned 238000/974803 commits, emitted 0 target rows
+Scanned 239000/974803 commits, emitted 0 target rows
+Scanned 240000/974803 commits, emitted 0 target rows
+Scanned 241000/974803 commits, emitted 0 target rows
+Scanned 242000/974803 commits, emitted 0 target rows
+Scanned 243000/974803 commits, emitted 0 target rows
+Scanned 244000/974803 commits, emitted 0 target rows
+Scanned 245000/974803 commits, emitted 0 target rows
+Scanned 246000/974803 commits, emitted 0 target rows
+Scanned 247000/974803 commits, emitted 0 target rows
+Scanned 248000/974803 commits, emitted 0 target rows
+Scanned 249000/974803 commits, emitted 0 target rows
+Scanned 250000/974803 commits, emitted 0 target rows
+Scanned 251000/974803 commits, emitted 0 target rows
+Scanned 252000/974803 commits, emitted 0 target rows
+Scanned 253000/974803 commits, emitted 0 target rows
+Scanned 254000/974803 commits, emitted 0 target rows
+Scanned 255000/974803 commits, emitted 0 target rows
+Scanned 256000/974803 commits, emitted 0 target rows
+Scanned 257000/974803 commits, emitted 0 target rows
+Scanned 258000/974803 commits, emitted 0 target rows
+Scanned 259000/974803 commits, emitted 0 target rows
+Scanned 260000/974803 commits, emitted 0 target rows
+Scanned 261000/974803 commits, emitted 0 target rows
+Scanned 262000/974803 commits, emitted 0 target rows
+Scanned 263000/974803 commits, emitted 0 target rows
+Scanned 264000/974803 commits, emitted 0 target rows
+Scanned 265000/974803 commits, emitted 0 target rows
+Scanned 266000/974803 commits, emitted 0 target rows
+Scanned 267000/974803 commits, emitted 0 target rows
+Scanned 268000/974803 commits, emitted 0 target rows
+Scanned 269000/974803 commits, emitted 0 target rows
+Scanned 270000/974803 commits, emitted 0 target rows
+Scanned 271000/974803 commits, emitted 0 target rows
+Scanned 272000/974803 commits, emitted 0 target rows
+Scanned 273000/974803 commits, emitted 0 target rows
+Scanned 274000/974803 commits, emitted 0 target rows
+Scanned 275000/974803 commits, emitted 0 target rows
+Scanned 276000/974803 commits, emitted 0 target rows
+Scanned 277000/974803 commits, emitted 0 target rows
+Scanned 278000/974803 commits, emitted 0 target rows
+Scanned 279000/974803 commits, emitted 0 target rows
+Scanned 280000/974803 commits, emitted 0 target rows
+Scanned 281000/974803 commits, emitted 0 target rows
+Scanned 282000/974803 commits, emitted 0 target rows
+Scanned 283000/974803 commits, emitted 0 target rows
+Scanned 284000/974803 commits, emitted 0 target rows
+Scanned 285000/974803 commits, emitted 0 target rows
+Scanned 286000/974803 commits, emitted 0 target rows
+Scanned 287000/974803 commits, emitted 0 target rows
+Scanned 288000/974803 commits, emitted 0 target rows
+Scanned 289000/974803 commits, emitted 0 target rows
+Scanned 290000/974803 commits, emitted 0 target rows
+Scanned 291000/974803 commits, emitted 0 target rows
+Scanned 292000/974803 commits, emitted 0 target rows
+Scanned 293000/974803 commits, emitted 0 target rows
+Scanned 294000/974803 commits, emitted 0 target rows
+Scanned 295000/974803 commits, emitted 0 target rows
+Scanned 296000/974803 commits, emitted 0 target rows
+Scanned 297000/974803 commits, emitted 0 target rows
+Scanned 298000/974803 commits, emitted 0 target rows
+Scanned 299000/974803 commits, emitted 0 target rows
+Scanned 300000/974803 commits, emitted 0 target rows
+Scanned 301000/974803 commits, emitted 0 target rows
+Scanned 302000/974803 commits, emitted 0 target rows
+Scanned 303000/974803 commits, emitted 0 target rows
+Scanned 304000/974803 commits, emitted 0 target rows
+Scanned 305000/974803 commits, emitted 0 target rows
+Scanned 306000/974803 commits, emitted 0 target rows
+Scanned 307000/974803 commits, emitted 0 target rows
+Scanned 308000/974803 commits, emitted 0 target rows
+Scanned 309000/974803 commits, emitted 0 target rows
+Scanned 310000/974803 commits, emitted 0 target rows
+Scanned 311000/974803 commits, emitted 0 target rows
+Scanned 312000/974803 commits, emitted 0 target rows
+Scanned 313000/974803 commits, emitted 0 target rows
+Scanned 314000/974803 commits, emitted 0 target rows
+Scanned 315000/974803 commits, emitted 0 target rows
+Scanned 316000/974803 commits, emitted 0 target rows
+Scanned 317000/974803 commits, emitted 0 target rows
+Scanned 318000/974803 commits, emitted 0 target rows
+Scanned 319000/974803 commits, emitted 0 target rows
+Scanned 320000/974803 commits, emitted 0 target rows
+Scanned 321000/974803 commits, emitted 0 target rows
+Scanned 322000/974803 commits, emitted 0 target rows
+Scanned 323000/974803 commits, emitted 0 target rows
+Scanned 324000/974803 commits, emitted 0 target rows
+Scanned 325000/974803 commits, emitted 0 target rows
+Scanned 326000/974803 commits, emitted 0 target rows
+Scanned 327000/974803 commits, emitted 0 target rows
+Scanned 328000/974803 commits, emitted 0 target rows
+Scanned 329000/974803 commits, emitted 0 target rows
+Scanned 330000/974803 commits, emitted 0 target rows
+Scanned 331000/974803 commits, emitted 0 target rows
+Scanned 332000/974803 commits, emitted 0 target rows
+Scanned 333000/974803 commits, emitted 0 target rows
+Scanned 334000/974803 commits, emitted 0 target rows
+Scanned 335000/974803 commits, emitted 0 target rows
+Scanned 336000/974803 commits, emitted 0 target rows
+Scanned 337000/974803 commits, emitted 0 target rows
+Scanned 338000/974803 commits, emitted 0 target rows
+Scanned 339000/974803 commits, emitted 0 target rows
+Scanned 340000/974803 commits, emitted 0 target rows
+Scanned 341000/974803 commits, emitted 0 target rows
+Scanned 342000/974803 commits, emitted 0 target rows
+Scanned 343000/974803 commits, emitted 0 target rows
+Scanned 344000/974803 commits, emitted 0 target rows
+Scanned 345000/974803 commits, emitted 0 target rows
+Scanned 346000/974803 commits, emitted 0 target rows
+Scanned 347000/974803 commits, emitted 0 target rows
+Scanned 348000/974803 commits, emitted 0 target rows
+Scanned 349000/974803 commits, emitted 0 target rows
+Scanned 350000/974803 commits, emitted 0 target rows
+Scanned 351000/974803 commits, emitted 0 target rows
+Scanned 352000/974803 commits, emitted 0 target rows
+Scanned 353000/974803 commits, emitted 0 target rows
+Scanned 354000/974803 commits, emitted 0 target rows
+Scanned 355000/974803 commits, emitted 0 target rows
+Scanned 356000/974803 commits, emitted 0 target rows
+Scanned 357000/974803 commits, emitted 0 target rows
+Scanned 358000/974803 commits, emitted 0 target rows
+Scanned 359000/974803 commits, emitted 0 target rows
+Scanned 360000/974803 commits, emitted 0 target rows
+Scanned 361000/974803 commits, emitted 0 target rows
+Scanned 362000/974803 commits, emitted 0 target rows
+Scanned 363000/974803 commits, emitted 0 target rows
+Scanned 364000/974803 commits, emitted 0 target rows
+Scanned 365000/974803 commits, emitted 0 target rows
+Scanned 366000/974803 commits, emitted 0 target rows
+Scanned 367000/974803 commits, emitted 0 target rows
+Scanned 368000/974803 commits, emitted 0 target rows
+Scanned 369000/974803 commits, emitted 0 target rows
+Scanned 370000/974803 commits, emitted 0 target rows
+Scanned 371000/974803 commits, emitted 0 target rows
+Scanned 372000/974803 commits, emitted 0 target rows
+Scanned 373000/974803 commits, emitted 0 target rows
+Scanned 374000/974803 commits, emitted 0 target rows
+Scanned 375000/974803 commits, emitted 0 target rows
+Scanned 376000/974803 commits, emitted 0 target rows
+Scanned 377000/974803 commits, emitted 0 target rows
+Scanned 378000/974803 commits, emitted 0 target rows
+Scanned 379000/974803 commits, emitted 0 target rows
+Scanned 380000/974803 commits, emitted 0 target rows
+Scanned 381000/974803 commits, emitted 0 target rows
+Scanned 382000/974803 commits, emitted 0 target rows
+Scanned 383000/974803 commits, emitted 0 target rows
+Scanned 384000/974803 commits, emitted 0 target rows
+Scanned 385000/974803 commits, emitted 0 target rows
+Scanned 386000/974803 commits, emitted 0 target rows
+Scanned 387000/974803 commits, emitted 0 target rows
+Scanned 388000/974803 commits, emitted 0 target rows
+Scanned 389000/974803 commits, emitted 0 target rows
+Scanned 390000/974803 commits, emitted 0 target rows
+Scanned 391000/974803 commits, emitted 0 target rows
+Scanned 392000/974803 commits, emitted 0 target rows
+Scanned 393000/974803 commits, emitted 0 target rows
+Scanned 394000/974803 commits, emitted 0 target rows
+Scanned 395000/974803 commits, emitted 0 target rows
+Scanned 396000/974803 commits, emitted 0 target rows
+Scanned 397000/974803 commits, emitted 0 target rows
+Scanned 398000/974803 commits, emitted 0 target rows
+Scanned 399000/974803 commits, emitted 0 target rows
+Scanned 400000/974803 commits, emitted 0 target rows
+Scanned 401000/974803 commits, emitted 0 target rows
+Scanned 402000/974803 commits, emitted 0 target rows
+Scanned 403000/974803 commits, emitted 0 target rows
+Scanned 404000/974803 commits, emitted 0 target rows
+Scanned 405000/974803 commits, emitted 0 target rows
+Scanned 406000/974803 commits, emitted 0 target rows
+Scanned 407000/974803 commits, emitted 0 target rows
+Scanned 408000/974803 commits, emitted 0 target rows
+Scanned 409000/974803 commits, emitted 0 target rows
+Scanned 410000/974803 commits, emitted 0 target rows
+Scanned 411000/974803 commits, emitted 0 target rows
+Scanned 412000/974803 commits, emitted 0 target rows
+Scanned 413000/974803 commits, emitted 0 target rows
+Scanned 414000/974803 commits, emitted 0 target rows
+Scanned 415000/974803 commits, emitted 0 target rows
+Scanned 416000/974803 commits, emitted 0 target rows
+Scanned 417000/974803 commits, emitted 0 target rows
+Scanned 418000/974803 commits, emitted 0 target rows
+Scanned 419000/974803 commits, emitted 0 target rows
+Scanned 420000/974803 commits, emitted 0 target rows
+Scanned 421000/974803 commits, emitted 0 target rows
+Scanned 422000/974803 commits, emitted 0 target rows
+Scanned 423000/974803 commits, emitted 0 target rows
+Scanned 424000/974803 commits, emitted 0 target rows
+Scanned 425000/974803 commits, emitted 0 target rows
+Scanned 426000/974803 commits, emitted 0 target rows
+Scanned 427000/974803 commits, emitted 0 target rows
+Scanned 428000/974803 commits, emitted 0 target rows
+Scanned 429000/974803 commits, emitted 0 target rows
+Scanned 430000/974803 commits, emitted 0 target rows
+Scanned 431000/974803 commits, emitted 0 target rows
+Scanned 432000/974803 commits, emitted 0 target rows
+Scanned 433000/974803 commits, emitted 0 target rows
+Scanned 434000/974803 commits, emitted 0 target rows
+Scanned 435000/974803 commits, emitted 0 target rows
+Scanned 436000/974803 commits, emitted 0 target rows
+Scanned 437000/974803 commits, emitted 0 target rows
+Scanned 438000/974803 commits, emitted 0 target rows
+Scanned 439000/974803 commits, emitted 0 target rows
+Scanned 440000/974803 commits, emitted 0 target rows
+Scanned 441000/974803 commits, emitted 0 target rows
+Scanned 442000/974803 commits, emitted 0 target rows
+Scanned 443000/974803 commits, emitted 0 target rows
+Scanned 444000/974803 commits, emitted 0 target rows
+Scanned 445000/974803 commits, emitted 0 target rows
+Scanned 446000/974803 commits, emitted 0 target rows
+Scanned 447000/974803 commits, emitted 0 target rows
+Scanned 448000/974803 commits, emitted 0 target rows
+Scanned 449000/974803 commits, emitted 0 target rows
+Scanned 450000/974803 commits, emitted 0 target rows
+Scanned 451000/974803 commits, emitted 0 target rows
+Scanned 452000/974803 commits, emitted 0 target rows
+Scanned 453000/974803 commits, emitted 0 target rows
+Scanned 454000/974803 commits, emitted 0 target rows
+Scanned 455000/974803 commits, emitted 0 target rows
+Scanned 456000/974803 commits, emitted 0 target rows
+Scanned 457000/974803 commits, emitted 0 target rows
+Scanned 458000/974803 commits, emitted 0 target rows
+Scanned 459000/974803 commits, emitted 0 target rows
+Scanned 460000/974803 commits, emitted 0 target rows
+Scanned 461000/974803 commits, emitted 0 target rows
+Scanned 462000/974803 commits, emitted 0 target rows
+Scanned 463000/974803 commits, emitted 0 target rows
+Scanned 464000/974803 commits, emitted 0 target rows
+Scanned 465000/974803 commits, emitted 0 target rows
+Scanned 466000/974803 commits, emitted 0 target rows
+Scanned 467000/974803 commits, emitted 0 target rows
+Scanned 468000/974803 commits, emitted 0 target rows
+Scanned 469000/974803 commits, emitted 0 target rows
+Scanned 470000/974803 commits, emitted 0 target rows
+Scanned 471000/974803 commits, emitted 0 target rows
+Scanned 472000/974803 commits, emitted 0 target rows
+Scanned 473000/974803 commits, emitted 0 target rows
+Scanned 474000/974803 commits, emitted 0 target rows
+Scanned 475000/974803 commits, emitted 0 target rows
+Scanned 476000/974803 commits, emitted 0 target rows
+Scanned 477000/974803 commits, emitted 0 target rows
+Scanned 478000/974803 commits, emitted 0 target rows
+Scanned 479000/974803 commits, emitted 0 target rows
+Scanned 480000/974803 commits, emitted 0 target rows
+Scanned 481000/974803 commits, emitted 0 target rows
+Scanned 482000/974803 commits, emitted 0 target rows
+Scanned 483000/974803 commits, emitted 0 target rows
+Scanned 484000/974803 commits, emitted 0 target rows
+Scanned 485000/974803 commits, emitted 0 target rows
+Scanned 486000/974803 commits, emitted 0 target rows
+Scanned 487000/974803 commits, emitted 0 target rows
+Scanned 488000/974803 commits, emitted 0 target rows
+Scanned 489000/974803 commits, emitted 0 target rows
+Scanned 490000/974803 commits, emitted 0 target rows
+Scanned 491000/974803 commits, emitted 0 target rows
+Scanned 492000/974803 commits, emitted 0 target rows
+Scanned 493000/974803 commits, emitted 0 target rows
+Scanned 494000/974803 commits, emitted 0 target rows
+Scanned 495000/974803 commits, emitted 0 target rows
+Scanned 496000/974803 commits, emitted 0 target rows
+Scanned 497000/974803 commits, emitted 0 target rows
+Scanned 498000/974803 commits, emitted 0 target rows
+Scanned 499000/974803 commits, emitted 0 target rows
+Scanned 500000/974803 commits, emitted 0 target rows
+Scanned 501000/974803 commits, emitted 0 target rows
+Scanned 502000/974803 commits, emitted 0 target rows
+Scanned 503000/974803 commits, emitted 0 target rows
+Scanned 504000/974803 commits, emitted 0 target rows
+Scanned 505000/974803 commits, emitted 0 target rows
+Scanned 506000/974803 commits, emitted 0 target rows
+Scanned 507000/974803 commits, emitted 0 target rows
+Scanned 508000/974803 commits, emitted 0 target rows
+Scanned 509000/974803 commits, emitted 0 target rows
+Scanned 510000/974803 commits, emitted 0 target rows
+Scanned 511000/974803 commits, emitted 0 target rows
+Scanned 512000/974803 commits, emitted 0 target rows
+Scanned 513000/974803 commits, emitted 0 target rows
+Scanned 514000/974803 commits, emitted 0 target rows
+Scanned 515000/974803 commits, emitted 0 target rows
+Scanned 516000/974803 commits, emitted 0 target rows
+Scanned 517000/974803 commits, emitted 0 target rows
+Scanned 518000/974803 commits, emitted 0 target rows
+Scanned 519000/974803 commits, emitted 0 target rows
+Scanned 520000/974803 commits, emitted 0 target rows
+Scanned 521000/974803 commits, emitted 0 target rows
+Scanned 522000/974803 commits, emitted 0 target rows
+Scanned 523000/974803 commits, emitted 0 target rows
+Scanned 524000/974803 commits, emitted 0 target rows
+Scanned 525000/974803 commits, emitted 0 target rows
+Scanned 526000/974803 commits, emitted 0 target rows
+Scanned 527000/974803 commits, emitted 0 target rows
+Scanned 528000/974803 commits, emitted 0 target rows
+Scanned 529000/974803 commits, emitted 0 target rows
+Scanned 530000/974803 commits, emitted 0 target rows
+Scanned 531000/974803 commits, emitted 0 target rows
+Scanned 532000/974803 commits, emitted 0 target rows
+Scanned 533000/974803 commits, emitted 0 target rows
+Scanned 534000/974803 commits, emitted 0 target rows
+Scanned 535000/974803 commits, emitted 0 target rows
+Scanned 536000/974803 commits, emitted 0 target rows
+Scanned 537000/974803 commits, emitted 0 target rows
+Scanned 538000/974803 commits, emitted 0 target rows
+Scanned 539000/974803 commits, emitted 0 target rows
+Scanned 540000/974803 commits, emitted 0 target rows
+Scanned 541000/974803 commits, emitted 0 target rows
+Scanned 542000/974803 commits, emitted 0 target rows
+Scanned 543000/974803 commits, emitted 0 target rows
+Scanned 544000/974803 commits, emitted 0 target rows
+Scanned 545000/974803 commits, emitted 0 target rows
+Scanned 546000/974803 commits, emitted 0 target rows
+Scanned 547000/974803 commits, emitted 0 target rows
+Scanned 548000/974803 commits, emitted 0 target rows
+Scanned 549000/974803 commits, emitted 0 target rows
+Scanned 550000/974803 commits, emitted 0 target rows
+Scanned 551000/974803 commits, emitted 0 target rows
+Scanned 552000/974803 commits, emitted 0 target rows
+Scanned 553000/974803 commits, emitted 0 target rows
+Scanned 554000/974803 commits, emitted 0 target rows
+Scanned 555000/974803 commits, emitted 0 target rows
+Scanned 556000/974803 commits, emitted 0 target rows
+Scanned 557000/974803 commits, emitted 0 target rows
+Scanned 558000/974803 commits, emitted 0 target rows
+Scanned 559000/974803 commits, emitted 0 target rows
+Scanned 560000/974803 commits, emitted 0 target rows
+Scanned 561000/974803 commits, emitted 0 target rows
+Scanned 562000/974803 commits, emitted 0 target rows
+Scanned 563000/974803 commits, emitted 0 target rows
+Scanned 564000/974803 commits, emitted 0 target rows
+Scanned 565000/974803 commits, emitted 0 target rows
+Scanned 566000/974803 commits, emitted 0 target rows
+Scanned 567000/974803 commits, emitted 0 target rows
+Scanned 568000/974803 commits, emitted 0 target rows
+Scanned 569000/974803 commits, emitted 0 target rows
+Scanned 570000/974803 commits, emitted 0 target rows
+Scanned 571000/974803 commits, emitted 0 target rows
+Scanned 572000/974803 commits, emitted 0 target rows
+Scanned 573000/974803 commits, emitted 0 target rows
+Scanned 574000/974803 commits, emitted 0 target rows
+Scanned 575000/974803 commits, emitted 0 target rows
+Scanned 576000/974803 commits, emitted 0 target rows
+Scanned 577000/974803 commits, emitted 0 target rows
+Scanned 578000/974803 commits, emitted 0 target rows
+Scanned 579000/974803 commits, emitted 0 target rows
+Scanned 580000/974803 commits, emitted 0 target rows
+Scanned 581000/974803 commits, emitted 0 target rows
+Scanned 582000/974803 commits, emitted 0 target rows
+Scanned 583000/974803 commits, emitted 0 target rows
+Scanned 584000/974803 commits, emitted 0 target rows
+Scanned 585000/974803 commits, emitted 0 target rows
+Scanned 586000/974803 commits, emitted 0 target rows
+Scanned 587000/974803 commits, emitted 0 target rows
+Scanned 588000/974803 commits, emitted 0 target rows
+Scanned 589000/974803 commits, emitted 0 target rows
+Scanned 590000/974803 commits, emitted 0 target rows
+Scanned 591000/974803 commits, emitted 0 target rows
+Scanned 592000/974803 commits, emitted 0 target rows
+Scanned 593000/974803 commits, emitted 0 target rows
+Scanned 594000/974803 commits, emitted 0 target rows
+Scanned 595000/974803 commits, emitted 0 target rows
+Scanned 596000/974803 commits, emitted 0 target rows
+Scanned 597000/974803 commits, emitted 0 target rows
+Scanned 598000/974803 commits, emitted 0 target rows
+Scanned 599000/974803 commits, emitted 0 target rows
+Scanned 600000/974803 commits, emitted 0 target rows
+Scanned 601000/974803 commits, emitted 0 target rows
+Scanned 602000/974803 commits, emitted 0 target rows
+Scanned 603000/974803 commits, emitted 0 target rows
+Scanned 604000/974803 commits, emitted 0 target rows
+Scanned 605000/974803 commits, emitted 0 target rows
+Scanned 606000/974803 commits, emitted 0 target rows
+Scanned 607000/974803 commits, emitted 0 target rows
+Scanned 608000/974803 commits, emitted 0 target rows
+Scanned 609000/974803 commits, emitted 0 target rows
+Scanned 610000/974803 commits, emitted 0 target rows
+Scanned 611000/974803 commits, emitted 0 target rows
+Scanned 612000/974803 commits, emitted 0 target rows
+Scanned 613000/974803 commits, emitted 0 target rows
+Scanned 614000/974803 commits, emitted 0 target rows
+Scanned 615000/974803 commits, emitted 0 target rows
+Scanned 616000/974803 commits, emitted 0 target rows
+Scanned 617000/974803 commits, emitted 0 target rows
+Scanned 618000/974803 commits, emitted 0 target rows
+Scanned 619000/974803 commits, emitted 0 target rows
+Scanned 620000/974803 commits, emitted 0 target rows
+Scanned 621000/974803 commits, emitted 0 target rows
+Scanned 622000/974803 commits, emitted 0 target rows
+Scanned 623000/974803 commits, emitted 0 target rows
+Scanned 624000/974803 commits, emitted 0 target rows
+Scanned 625000/974803 commits, emitted 0 target rows
+Scanned 626000/974803 commits, emitted 0 target rows
+Scanned 627000/974803 commits, emitted 0 target rows
+Scanned 628000/974803 commits, emitted 0 target rows
+Scanned 629000/974803 commits, emitted 0 target rows
+Scanned 630000/974803 commits, emitted 0 target rows
+Scanned 631000/974803 commits, emitted 0 target rows
+Scanned 632000/974803 commits, emitted 0 target rows
+Scanned 633000/974803 commits, emitted 0 target rows
+Scanned 634000/974803 commits, emitted 0 target rows
+Scanned 635000/974803 commits, emitted 0 target rows
+Scanned 636000/974803 commits, emitted 0 target rows
+Scanned 637000/974803 commits, emitted 0 target rows
+Scanned 638000/974803 commits, emitted 0 target rows
+Scanned 639000/974803 commits, emitted 0 target rows
+Scanned 640000/974803 commits, emitted 0 target rows
+Scanned 641000/974803 commits, emitted 0 target rows
+Scanned 642000/974803 commits, emitted 0 target rows
+Scanned 643000/974803 commits, emitted 0 target rows
+Scanned 644000/974803 commits, emitted 0 target rows
+Scanned 645000/974803 commits, emitted 0 target rows
+Scanned 646000/974803 commits, emitted 0 target rows
+Scanned 647000/974803 commits, emitted 0 target rows
+Scanned 648000/974803 commits, emitted 0 target rows
+Scanned 649000/974803 commits, emitted 0 target rows
+Scanned 650000/974803 commits, emitted 0 target rows
+Scanned 651000/974803 commits, emitted 0 target rows
+Scanned 652000/974803 commits, emitted 0 target rows
+Scanned 653000/974803 commits, emitted 0 target rows
+Scanned 654000/974803 commits, emitted 0 target rows
+Scanned 655000/974803 commits, emitted 0 target rows
+Scanned 656000/974803 commits, emitted 0 target rows
+Scanned 657000/974803 commits, emitted 0 target rows
+Scanned 658000/974803 commits, emitted 0 target rows
+Scanned 659000/974803 commits, emitted 0 target rows
+Scanned 660000/974803 commits, emitted 0 target rows
+Scanned 661000/974803 commits, emitted 0 target rows
+Scanned 662000/974803 commits, emitted 0 target rows
+Scanned 663000/974803 commits, emitted 0 target rows
+Scanned 664000/974803 commits, emitted 0 target rows
+Scanned 665000/974803 commits, emitted 0 target rows
+Scanned 666000/974803 commits, emitted 0 target rows
+Scanned 667000/974803 commits, emitted 0 target rows
+Scanned 668000/974803 commits, emitted 0 target rows
+Scanned 669000/974803 commits, emitted 0 target rows
+Scanned 670000/974803 commits, emitted 0 target rows
+Scanned 671000/974803 commits, emitted 0 target rows
+Scanned 672000/974803 commits, emitted 0 target rows
+Scanned 673000/974803 commits, emitted 0 target rows
+Scanned 674000/974803 commits, emitted 0 target rows
+Scanned 675000/974803 commits, emitted 0 target rows
+Scanned 676000/974803 commits, emitted 0 target rows
+Scanned 677000/974803 commits, emitted 0 target rows
+Scanned 678000/974803 commits, emitted 0 target rows
+Scanned 679000/974803 commits, emitted 0 target rows
+Scanned 680000/974803 commits, emitted 0 target rows
+Scanned 681000/974803 commits, emitted 0 target rows
+Scanned 682000/974803 commits, emitted 0 target rows
+Scanned 683000/974803 commits, emitted 0 target rows
+Scanned 684000/974803 commits, emitted 0 target rows
+Scanned 685000/974803 commits, emitted 0 target rows
+Scanned 686000/974803 commits, emitted 0 target rows
+Scanned 687000/974803 commits, emitted 0 target rows
+Scanned 688000/974803 commits, emitted 0 target rows
+Scanned 689000/974803 commits, emitted 0 target rows
+Scanned 690000/974803 commits, emitted 0 target rows
+Scanned 691000/974803 commits, emitted 0 target rows
+Scanned 692000/974803 commits, emitted 0 target rows
+Scanned 693000/974803 commits, emitted 0 target rows
+Scanned 694000/974803 commits, emitted 0 target rows
+Scanned 695000/974803 commits, emitted 0 target rows
+Scanned 696000/974803 commits, emitted 0 target rows
+Scanned 697000/974803 commits, emitted 0 target rows
+Scanned 698000/974803 commits, emitted 0 target rows
+Scanned 699000/974803 commits, emitted 0 target rows
+Scanned 700000/974803 commits, emitted 0 target rows
+Scanned 701000/974803 commits, emitted 0 target rows
+Scanned 702000/974803 commits, emitted 0 target rows
+Scanned 703000/974803 commits, emitted 0 target rows
+Scanned 704000/974803 commits, emitted 0 target rows
+Scanned 705000/974803 commits, emitted 0 target rows
+Scanned 706000/974803 commits, emitted 0 target rows
+Scanned 707000/974803 commits, emitted 0 target rows
+Scanned 708000/974803 commits, emitted 0 target rows
+Scanned 709000/974803 commits, emitted 0 target rows
+Scanned 710000/974803 commits, emitted 0 target rows
+Scanned 711000/974803 commits, emitted 0 target rows
+Scanned 712000/974803 commits, emitted 0 target rows
+Scanned 713000/974803 commits, emitted 0 target rows
+Scanned 714000/974803 commits, emitted 0 target rows
+Scanned 715000/974803 commits, emitted 0 target rows
+Scanned 716000/974803 commits, emitted 0 target rows
+Scanned 717000/974803 commits, emitted 0 target rows
+Scanned 718000/974803 commits, emitted 0 target rows
+Scanned 719000/974803 commits, emitted 0 target rows
+Scanned 720000/974803 commits, emitted 0 target rows
+Scanned 721000/974803 commits, emitted 0 target rows
+Scanned 722000/974803 commits, emitted 0 target rows
+Scanned 723000/974803 commits, emitted 0 target rows
+Scanned 724000/974803 commits, emitted 0 target rows
+Scanned 725000/974803 commits, emitted 0 target rows
+Scanned 726000/974803 commits, emitted 0 target rows
+Scanned 727000/974803 commits, emitted 0 target rows
+Scanned 728000/974803 commits, emitted 0 target rows
+Scanned 729000/974803 commits, emitted 0 target rows
+Scanned 730000/974803 commits, emitted 0 target rows
+Scanned 731000/974803 commits, emitted 0 target rows
+Scanned 732000/974803 commits, emitted 0 target rows
+Scanned 733000/974803 commits, emitted 0 target rows
+Scanned 734000/974803 commits, emitted 0 target rows
+Scanned 735000/974803 commits, emitted 0 target rows
+Scanned 736000/974803 commits, emitted 0 target rows
+Scanned 737000/974803 commits, emitted 0 target rows
+Scanned 738000/974803 commits, emitted 0 target rows
+Scanned 739000/974803 commits, emitted 0 target rows
+Scanned 740000/974803 commits, emitted 0 target rows
+Scanned 741000/974803 commits, emitted 0 target rows
+Scanned 742000/974803 commits, emitted 0 target rows
+Scanned 743000/974803 commits, emitted 0 target rows
+Scanned 744000/974803 commits, emitted 0 target rows
+Scanned 745000/974803 commits, emitted 0 target rows
+Scanned 746000/974803 commits, emitted 0 target rows
+Scanned 747000/974803 commits, emitted 0 target rows
+Scanned 748000/974803 commits, emitted 0 target rows
+Scanned 749000/974803 commits, emitted 0 target rows
+Scanned 750000/974803 commits, emitted 0 target rows
+Scanned 751000/974803 commits, emitted 0 target rows
+Scanned 752000/974803 commits, emitted 0 target rows
+Scanned 753000/974803 commits, emitted 0 target rows
+Scanned 754000/974803 commits, emitted 0 target rows
+Scanned 755000/974803 commits, emitted 0 target rows
+Scanned 756000/974803 commits, emitted 0 target rows
+Scanned 757000/974803 commits, emitted 0 target rows
+Scanned 758000/974803 commits, emitted 0 target rows
+Scanned 759000/974803 commits, emitted 0 target rows
+Scanned 760000/974803 commits, emitted 0 target rows
+Scanned 761000/974803 commits, emitted 0 target rows
+Scanned 762000/974803 commits, emitted 0 target rows
+Scanned 763000/974803 commits, emitted 0 target rows
+Scanned 764000/974803 commits, emitted 0 target rows
+Scanned 765000/974803 commits, emitted 0 target rows
+Scanned 766000/974803 commits, emitted 0 target rows
+Scanned 767000/974803 commits, emitted 0 target rows
+Scanned 768000/974803 commits, emitted 0 target rows
+Scanned 769000/974803 commits, emitted 0 target rows
+Scanned 770000/974803 commits, emitted 0 target rows
+Scanned 771000/974803 commits, emitted 0 target rows
+Scanned 772000/974803 commits, emitted 0 target rows
+Scanned 773000/974803 commits, emitted 0 target rows
+Scanned 774000/974803 commits, emitted 0 target rows
+Scanned 775000/974803 commits, emitted 0 target rows
+Scanned 776000/974803 commits, emitted 0 target rows
+Scanned 777000/974803 commits, emitted 0 target rows
+Scanned 778000/974803 commits, emitted 0 target rows
+Scanned 779000/974803 commits, emitted 0 target rows
+Scanned 780000/974803 commits, emitted 0 target rows
+Scanned 781000/974803 commits, emitted 0 target rows
+Scanned 782000/974803 commits, emitted 0 target rows
+Scanned 783000/974803 commits, emitted 0 target rows
+Scanned 784000/974803 commits, emitted 0 target rows
+Scanned 785000/974803 commits, emitted 0 target rows
+Scanned 786000/974803 commits, emitted 0 target rows
+Scanned 787000/974803 commits, emitted 0 target rows
+Scanned 788000/974803 commits, emitted 0 target rows
+Scanned 789000/974803 commits, emitted 0 target rows
+Scanned 790000/974803 commits, emitted 0 target rows
+Scanned 791000/974803 commits, emitted 0 target rows
+Scanned 792000/974803 commits, emitted 0 target rows
+Scanned 793000/974803 commits, emitted 0 target rows
+Scanned 794000/974803 commits, emitted 0 target rows
+Scanned 795000/974803 commits, emitted 0 target rows
+Scanned 796000/974803 commits, emitted 0 target rows
+Scanned 797000/974803 commits, emitted 0 target rows
+Scanned 798000/974803 commits, emitted 0 target rows
+Scanned 799000/974803 commits, emitted 0 target rows
+Scanned 800000/974803 commits, emitted 0 target rows
+Scanned 801000/974803 commits, emitted 0 target rows
+Scanned 802000/974803 commits, emitted 0 target rows
+Scanned 803000/974803 commits, emitted 0 target rows
+Scanned 804000/974803 commits, emitted 0 target rows
+Scanned 805000/974803 commits, emitted 0 target rows
+Scanned 806000/974803 commits, emitted 0 target rows
+Scanned 807000/974803 commits, emitted 0 target rows
+Scanned 808000/974803 commits, emitted 0 target rows
+Scanned 809000/974803 commits, emitted 0 target rows
+Scanned 810000/974803 commits, emitted 0 target rows
+Scanned 811000/974803 commits, emitted 0 target rows
+Scanned 812000/974803 commits, emitted 0 target rows
+Scanned 813000/974803 commits, emitted 0 target rows
+Scanned 814000/974803 commits, emitted 0 target rows
+Scanned 815000/974803 commits, emitted 0 target rows
+Scanned 816000/974803 commits, emitted 0 target rows
+Scanned 817000/974803 commits, emitted 0 target rows
+Scanned 818000/974803 commits, emitted 0 target rows
+Scanned 819000/974803 commits, emitted 0 target rows
+Scanned 820000/974803 commits, emitted 0 target rows
+Scanned 821000/974803 commits, emitted 0 target rows
+Scanned 822000/974803 commits, emitted 0 target rows
+Scanned 823000/974803 commits, emitted 0 target rows
+Scanned 824000/974803 commits, emitted 0 target rows
+Scanned 825000/974803 commits, emitted 0 target rows
+Scanned 826000/974803 commits, emitted 0 target rows
+Scanned 827000/974803 commits, emitted 0 target rows
+Scanned 828000/974803 commits, emitted 0 target rows
+Scanned 829000/974803 commits, emitted 0 target rows
+Scanned 830000/974803 commits, emitted 0 target rows
+Scanned 831000/974803 commits, emitted 0 target rows
+Scanned 832000/974803 commits, emitted 0 target rows
+Scanned 833000/974803 commits, emitted 0 target rows
+Scanned 834000/974803 commits, emitted 0 target rows
+Scanned 835000/974803 commits, emitted 0 target rows
+Scanned 836000/974803 commits, emitted 0 target rows
+Scanned 837000/974803 commits, emitted 0 target rows
+Scanned 838000/974803 commits, emitted 0 target rows
+Scanned 839000/974803 commits, emitted 0 target rows
+Scanned 840000/974803 commits, emitted 0 target rows
+Scanned 841000/974803 commits, emitted 0 target rows
+Scanned 842000/974803 commits, emitted 0 target rows
+Scanned 843000/974803 commits, emitted 0 target rows
+Scanned 844000/974803 commits, emitted 0 target rows
+Scanned 845000/974803 commits, emitted 0 target rows
+Scanned 846000/974803 commits, emitted 0 target rows
+Scanned 847000/974803 commits, emitted 0 target rows
+Scanned 848000/974803 commits, emitted 0 target rows
+Scanned 849000/974803 commits, emitted 0 target rows
+Scanned 850000/974803 commits, emitted 0 target rows
+Scanned 851000/974803 commits, emitted 0 target rows
+Scanned 852000/974803 commits, emitted 0 target rows
+Scanned 853000/974803 commits, emitted 0 target rows
+Scanned 854000/974803 commits, emitted 0 target rows
+Scanned 855000/974803 commits, emitted 203 target rows
+Scanned 856000/974803 commits, emitted 907 target rows
+Scanned 857000/974803 commits, emitted 1622 target rows
+Scanned 858000/974803 commits, emitted 2333 target rows
+Scanned 859000/974803 commits, emitted 2972 target rows
+Scanned 860000/974803 commits, emitted 3670 target rows
+Scanned 861000/974803 commits, emitted 4382 target rows
+Scanned 862000/974803 commits, emitted 5120 target rows
+Scanned 863000/974803 commits, emitted 5806 target rows
+Scanned 864000/974803 commits, emitted 6559 target rows
+Scanned 865000/974803 commits, emitted 7280 target rows
+Scanned 866000/974803 commits, emitted 7994 target rows
+Scanned 867000/974803 commits, emitted 8726 target rows
+Scanned 868000/974803 commits, emitted 9310 target rows
+Scanned 869000/974803 commits, emitted 10048 target rows
+Scanned 870000/974803 commits, emitted 10738 target rows
+Scanned 871000/974803 commits, emitted 11382 target rows
+Scanned 872000/974803 commits, emitted 12003 target rows
+Scanned 873000/974803 commits, emitted 12732 target rows
+Scanned 874000/974803 commits, emitted 13399 target rows
+Scanned 875000/974803 commits, emitted 14136 target rows
+Scanned 876000/974803 commits, emitted 14915 target rows
+Scanned 877000/974803 commits, emitted 15619 target rows
+Scanned 878000/974803 commits, emitted 16445 target rows
+Scanned 879000/974803 commits, emitted 17072 target rows
+Scanned 880000/974803 commits, emitted 17858 target rows
+Scanned 881000/974803 commits, emitted 18604 target rows
+Scanned 882000/974803 commits, emitted 19263 target rows
+Scanned 883000/974803 commits, emitted 19981 target rows
+Scanned 884000/974803 commits, emitted 20716 target rows
+Scanned 885000/974803 commits, emitted 21365 target rows
+Scanned 886000/974803 commits, emitted 22198 target rows
+Scanned 887000/974803 commits, emitted 22944 target rows
+Scanned 888000/974803 commits, emitted 23626 target rows
+Scanned 889000/974803 commits, emitted 24451 target rows
+Scanned 890000/974803 commits, emitted 25098 target rows
+Scanned 891000/974803 commits, emitted 25820 target rows
+Scanned 892000/974803 commits, emitted 26602 target rows
+Scanned 893000/974803 commits, emitted 27203 target rows
+Scanned 894000/974803 commits, emitted 28027 target rows
+Scanned 895000/974803 commits, emitted 28753 target rows
+Scanned 896000/974803 commits, emitted 29569 target rows
+Scanned 897000/974803 commits, emitted 30036 target rows
+Scanned 898000/974803 commits, emitted 30794 target rows
+Scanned 899000/974803 commits, emitted 31566 target rows
+Scanned 900000/974803 commits, emitted 32305 target rows
+Scanned 901000/974803 commits, emitted 32908 target rows
+Scanned 902000/974803 commits, emitted 33615 target rows
+Scanned 903000/974803 commits, emitted 34505 target rows
+Scanned 904000/974803 commits, emitted 35320 target rows
+Scanned 905000/974803 commits, emitted 36036 target rows
+Scanned 906000/974803 commits, emitted 36503 target rows
+Scanned 907000/974803 commits, emitted 37269 target rows
+Scanned 908000/974803 commits, emitted 38067 target rows
+Scanned 909000/974803 commits, emitted 38793 target rows
+Scanned 910000/974803 commits, emitted 39390 target rows
+Scanned 911000/974803 commits, emitted 40113 target rows
+Scanned 912000/974803 commits, emitted 40901 target rows
+Scanned 913000/974803 commits, emitted 41657 target rows
+Scanned 914000/974803 commits, emitted 42233 target rows
+Scanned 915000/974803 commits, emitted 42997 target rows
+Scanned 916000/974803 commits, emitted 43741 target rows
+Scanned 917000/974803 commits, emitted 44469 target rows
+Scanned 918000/974803 commits, emitted 44966 target rows
+Scanned 919000/974803 commits, emitted 45751 target rows
+Scanned 920000/974803 commits, emitted 46466 target rows
+Scanned 921000/974803 commits, emitted 47244 target rows
+Scanned 922000/974803 commits, emitted 47892 target rows
+Scanned 923000/974803 commits, emitted 48718 target rows
+Scanned 924000/974803 commits, emitted 49445 target rows
+Scanned 925000/974803 commits, emitted 50203 target rows
+Scanned 926000/974803 commits, emitted 50699 target rows
+Scanned 927000/974803 commits, emitted 51513 target rows
+Scanned 928000/974803 commits, emitted 52215 target rows
+Scanned 929000/974803 commits, emitted 52913 target rows
+Scanned 930000/974803 commits, emitted 53744 target rows
+Scanned 931000/974803 commits, emitted 54633 target rows
+Scanned 932000/974803 commits, emitted 55062 target rows
+Scanned 933000/974803 commits, emitted 55793 target rows
+Scanned 934000/974803 commits, emitted 56448 target rows
+Scanned 935000/974803 commits, emitted 56983 target rows
+Scanned 936000/974803 commits, emitted 57740 target rows
+Scanned 937000/974803 commits, emitted 58553 target rows
+Scanned 938000/974803 commits, emitted 59168 target rows
+Scanned 939000/974803 commits, emitted 59698 target rows
+Scanned 940000/974803 commits, emitted 60542 target rows
+Scanned 941000/974803 commits, emitted 61245 target rows
+Scanned 942000/974803 commits, emitted 61958 target rows
+Scanned 943000/974803 commits, emitted 62719 target rows
+Scanned 944000/974803 commits, emitted 63474 target rows
+Scanned 945000/974803 commits, emitted 64297 target rows
+Scanned 946000/974803 commits, emitted 64892 target rows
+Scanned 947000/974803 commits, emitted 65537 target rows
+Scanned 948000/974803 commits, emitted 66304 target rows
+Scanned 949000/974803 commits, emitted 67161 target rows
+Scanned 950000/974803 commits, emitted 67894 target rows
+Scanned 951000/974803 commits, emitted 68438 target rows
+Scanned 952000/974803 commits, emitted 69229 target rows
+Scanned 953000/974803 commits, emitted 70099 target rows
+Scanned 954000/974803 commits, emitted 70915 target rows
+Scanned 955000/974803 commits, emitted 71505 target rows
+Scanned 956000/974803 commits, emitted 72231 target rows
+Scanned 957000/974803 commits, emitted 72798 target rows
+Scanned 958000/974803 commits, emitted 73625 target rows
+Scanned 959000/974803 commits, emitted 74399 target rows
+Scanned 960000/974803 commits, emitted 75187 target rows
+Scanned 961000/974803 commits, emitted 75984 target rows
+Scanned 962000/974803 commits, emitted 76681 target rows
+Scanned 963000/974803 commits, emitted 77427 target rows
+Scanned 964000/974803 commits, emitted 78169 target rows
+Scanned 965000/974803 commits, emitted 78881 target rows
+Scanned 966000/974803 commits, emitted 79711 target rows
+Scanned 967000/974803 commits, emitted 80262 target rows
+Scanned 968000/974803 commits, emitted 81001 target rows
+Scanned 969000/974803 commits, emitted 81749 target rows
+Scanned 970000/974803 commits, emitted 82619 target rows
+Scanned 971000/974803 commits, emitted 83438 target rows
+Scanned 972000/974803 commits, emitted 84057 target rows
+Scanned 973000/974803 commits, emitted 84753 target rows
+Scanned 974000/974803 commits, emitted 84753 target rows
+Scanned 974803/974803 commits, emitted 84753 target rows
+Wrote feature dataset to: /home/roman/834-group1/artifacts/commits_features.csv
+Emitted 84753 target commits
+--- scripts.extract_features return code: 0, took 0:22:26 ---
+
+=== Running scripts.run_szz ===
+Blame ignores the revisions in /home/roman/834-group1/artifacts/blame_ignore_revs.txt
+Identifying validated bug-fixing commits...
+Found 29948 validated bug-fixing commits
+Running SZZ...
+SZZ processed 100/29948 fix commits; inducing so far=202
+SZZ processed 200/29948 fix commits; inducing so far=403
+SZZ processed 300/29948 fix commits; inducing so far=545
+SZZ processed 400/29948 fix commits; inducing so far=805
+SZZ processed 500/29948 fix commits; inducing so far=1031
+SZZ processed 600/29948 fix commits; inducing so far=1258
+SZZ processed 700/29948 fix commits; inducing so far=1410
+SZZ processed 800/29948 fix commits; inducing so far=1660
+SZZ processed 900/29948 fix commits; inducing so far=1849
+SZZ processed 1000/29948 fix commits; inducing so far=2053
+SZZ processed 1100/29948 fix commits; inducing so far=2235
+SZZ processed 1200/29948 fix commits; inducing so far=2420
+SZZ processed 1300/29948 fix commits; inducing so far=2751
+SZZ processed 1400/29948 fix commits; inducing so far=3011
+SZZ processed 1500/29948 fix commits; inducing so far=3219
+SZZ processed 1600/29948 fix commits; inducing so far=3390
+SZZ processed 1700/29948 fix commits; inducing so far=3688
+SZZ processed 1800/29948 fix commits; inducing so far=3822
+SZZ processed 1900/29948 fix commits; inducing so far=4042
+SZZ processed 2000/29948 fix commits; inducing so far=4251
+SZZ processed 2100/29948 fix commits; inducing so far=4461
+SZZ processed 2200/29948 fix commits; inducing so far=4705
+SZZ processed 2300/29948 fix commits; inducing so far=4872
+SZZ processed 2400/29948 fix commits; inducing so far=5026
+SZZ processed 2500/29948 fix commits; inducing so far=5268
+SZZ processed 2600/29948 fix commits; inducing so far=5881
+SZZ processed 2700/29948 fix commits; inducing so far=6093
+SZZ processed 2800/29948 fix commits; inducing so far=6244
+SZZ processed 2900/29948 fix commits; inducing so far=6401
+SZZ processed 3000/29948 fix commits; inducing so far=6567
+SZZ processed 3100/29948 fix commits; inducing so far=6731
+SZZ processed 3200/29948 fix commits; inducing so far=6837
+SZZ processed 3300/29948 fix commits; inducing so far=7083
+SZZ processed 3400/29948 fix commits; inducing so far=7232
+SZZ processed 3500/29948 fix commits; inducing so far=7403
+SZZ processed 3600/29948 fix commits; inducing so far=7525
+SZZ processed 3700/29948 fix commits; inducing so far=7740
+SZZ processed 3800/29948 fix commits; inducing so far=7932
+SZZ processed 3900/29948 fix commits; inducing so far=8047
+SZZ processed 4000/29948 fix commits; inducing so far=8189
+SZZ processed 4100/29948 fix commits; inducing so far=8398
+SZZ processed 4200/29948 fix commits; inducing so far=8565
+SZZ processed 4300/29948 fix commits; inducing so far=8743
+SZZ processed 4400/29948 fix commits; inducing so far=8931
+SZZ processed 4500/29948 fix commits; inducing so far=9051
+SZZ processed 4600/29948 fix commits; inducing so far=9262
+SZZ processed 4700/29948 fix commits; inducing so far=9375
+SZZ processed 4800/29948 fix commits; inducing so far=9612
+SZZ processed 4900/29948 fix commits; inducing so far=9763
+SZZ processed 5000/29948 fix commits; inducing so far=9946
+SZZ processed 5100/29948 fix commits; inducing so far=10079
+SZZ processed 5200/29948 fix commits; inducing so far=10224
+SZZ processed 5300/29948 fix commits; inducing so far=10372
+SZZ processed 5400/29948 fix commits; inducing so far=10590
+SZZ processed 5500/29948 fix commits; inducing so far=10767
+SZZ processed 5600/29948 fix commits; inducing so far=10902
+SZZ processed 5700/29948 fix commits; inducing so far=11040
+SZZ processed 5800/29948 fix commits; inducing so far=11211
+SZZ processed 5900/29948 fix commits; inducing so far=11351
+SZZ processed 6000/29948 fix commits; inducing so far=11505
+SZZ processed 6100/29948 fix commits; inducing so far=11814
+SZZ processed 6200/29948 fix commits; inducing so far=11958
+SZZ processed 6300/29948 fix commits; inducing so far=12080
+SZZ processed 6400/29948 fix commits; inducing so far=12152
+SZZ processed 6500/29948 fix commits; inducing so far=12281
+SZZ processed 6600/29948 fix commits; inducing so far=12406
+SZZ processed 6700/29948 fix commits; inducing so far=12558
+SZZ processed 6800/29948 fix commits; inducing so far=12718
+SZZ processed 6900/29948 fix commits; inducing so far=12862
+SZZ processed 7000/29948 fix commits; inducing so far=13008
+SZZ processed 7100/29948 fix commits; inducing so far=13218
+SZZ processed 7200/29948 fix commits; inducing so far=13633
+SZZ processed 7300/29948 fix commits; inducing so far=13827
+SZZ processed 7400/29948 fix commits; inducing so far=14056
+SZZ processed 7500/29948 fix commits; inducing so far=14175
+SZZ processed 7600/29948 fix commits; inducing so far=14348
+SZZ processed 7700/29948 fix commits; inducing so far=14472
+SZZ processed 7800/29948 fix commits; inducing so far=14612
+SZZ processed 7900/29948 fix commits; inducing so far=14825
+SZZ processed 8000/29948 fix commits; inducing so far=15014
+SZZ processed 8100/29948 fix commits; inducing so far=15264
+SZZ processed 8200/29948 fix commits; inducing so far=15454
+SZZ processed 8300/29948 fix commits; inducing so far=15604
+SZZ processed 8400/29948 fix commits; inducing so far=15785
+SZZ processed 8500/29948 fix commits; inducing so far=15940
+SZZ processed 8600/29948 fix commits; inducing so far=16080
+SZZ processed 8700/29948 fix commits; inducing so far=16340
+SZZ processed 8800/29948 fix commits; inducing so far=16473
+SZZ processed 8900/29948 fix commits; inducing so far=16594
+SZZ processed 9000/29948 fix commits; inducing so far=16804
+SZZ processed 9100/29948 fix commits; inducing so far=16973
+SZZ processed 9200/29948 fix commits; inducing so far=17135
+SZZ processed 9300/29948 fix commits; inducing so far=17315
+SZZ processed 9400/29948 fix commits; inducing so far=17515
+SZZ processed 9500/29948 fix commits; inducing so far=17656
+SZZ processed 9600/29948 fix commits; inducing so far=17769
+SZZ processed 9700/29948 fix commits; inducing so far=17914
+SZZ processed 9800/29948 fix commits; inducing so far=18033
+SZZ processed 9900/29948 fix commits; inducing so far=18240
+SZZ processed 10000/29948 fix commits; inducing so far=18367
+SZZ processed 10100/29948 fix commits; inducing so far=18485
+SZZ processed 10200/29948 fix commits; inducing so far=18707
+SZZ processed 10300/29948 fix commits; inducing so far=18847
+SZZ processed 10400/29948 fix commits; inducing so far=19021
+SZZ processed 10500/29948 fix commits; inducing so far=19134
+SZZ processed 10600/29948 fix commits; inducing so far=19311
+SZZ processed 10700/29948 fix commits; inducing so far=19547
+SZZ processed 10800/29948 fix commits; inducing so far=19681
+SZZ processed 10900/29948 fix commits; inducing so far=19810
+SZZ processed 11000/29948 fix commits; inducing so far=19977
+SZZ processed 11100/29948 fix commits; inducing so far=20326
+SZZ processed 11200/29948 fix commits; inducing so far=20608
+SZZ processed 11300/29948 fix commits; inducing so far=20729
+SZZ processed 11400/29948 fix commits; inducing so far=20884
+SZZ processed 11500/29948 fix commits; inducing so far=20938
+SZZ processed 11600/29948 fix commits; inducing so far=21214
+SZZ processed 11700/29948 fix commits; inducing so far=21378
+SZZ processed 11800/29948 fix commits; inducing so far=21643
+SZZ processed 11900/29948 fix commits; inducing so far=21788
+SZZ processed 12000/29948 fix commits; inducing so far=21978
+SZZ processed 12100/29948 fix commits; inducing so far=22246
+SZZ processed 12200/29948 fix commits; inducing so far=22453
+SZZ processed 12300/29948 fix commits; inducing so far=22609
+SZZ processed 12400/29948 fix commits; inducing so far=22713
+SZZ processed 12500/29948 fix commits; inducing so far=22834
+SZZ processed 12600/29948 fix commits; inducing so far=23032
+SZZ processed 12700/29948 fix commits; inducing so far=23181
+SZZ processed 12800/29948 fix commits; inducing so far=23377
+SZZ processed 12900/29948 fix commits; inducing so far=23459
+SZZ processed 13000/29948 fix commits; inducing so far=23584
+SZZ processed 13100/29948 fix commits; inducing so far=23675
+SZZ processed 13200/29948 fix commits; inducing so far=23818
+SZZ processed 13300/29948 fix commits; inducing so far=23956
+SZZ processed 13400/29948 fix commits; inducing so far=24126
+SZZ processed 13500/29948 fix commits; inducing so far=24304
+SZZ processed 13600/29948 fix commits; inducing so far=24435
+SZZ processed 13700/29948 fix commits; inducing so far=24618
+SZZ processed 13800/29948 fix commits; inducing so far=24793
+SZZ processed 13900/29948 fix commits; inducing so far=24928
+SZZ processed 14000/29948 fix commits; inducing so far=25133
+SZZ processed 14100/29948 fix commits; inducing so far=25279
+SZZ processed 14200/29948 fix commits; inducing so far=25490
+SZZ processed 14300/29948 fix commits; inducing so far=25639
+SZZ processed 14400/29948 fix commits; inducing so far=25756
+SZZ processed 14500/29948 fix commits; inducing so far=25996
+SZZ processed 14600/29948 fix commits; inducing so far=26211
+SZZ processed 14700/29948 fix commits; inducing so far=26385
+SZZ processed 14800/29948 fix commits; inducing so far=26510
+SZZ processed 14900/29948 fix commits; inducing so far=26730
+SZZ processed 15000/29948 fix commits; inducing so far=26914
+SZZ processed 15100/29948 fix commits; inducing so far=27053
+SZZ processed 15200/29948 fix commits; inducing so far=27136
+SZZ processed 15300/29948 fix commits; inducing so far=27288
+SZZ processed 15400/29948 fix commits; inducing so far=27446
+SZZ processed 15500/29948 fix commits; inducing so far=27612
+SZZ processed 15600/29948 fix commits; inducing so far=27736
+SZZ processed 15700/29948 fix commits; inducing so far=27887
+SZZ processed 15800/29948 fix commits; inducing so far=28198
+SZZ processed 15900/29948 fix commits; inducing so far=28304
+SZZ processed 16000/29948 fix commits; inducing so far=28488
+SZZ processed 16100/29948 fix commits; inducing so far=28766
+SZZ processed 16200/29948 fix commits; inducing so far=28806
+SZZ processed 16300/29948 fix commits; inducing so far=28944
+SZZ processed 16400/29948 fix commits; inducing so far=29045
+SZZ processed 16500/29948 fix commits; inducing so far=29146
+SZZ processed 16600/29948 fix commits; inducing so far=29364
+SZZ processed 16700/29948 fix commits; inducing so far=29493
+SZZ processed 16800/29948 fix commits; inducing so far=29621
+SZZ processed 16900/29948 fix commits; inducing so far=29738
+SZZ processed 17000/29948 fix commits; inducing so far=29888
+SZZ processed 17100/29948 fix commits; inducing so far=29996
+SZZ processed 17200/29948 fix commits; inducing so far=30248
+SZZ processed 17300/29948 fix commits; inducing so far=30332
+SZZ processed 17400/29948 fix commits; inducing so far=30506
+SZZ processed 17500/29948 fix commits; inducing so far=30706
+SZZ processed 17600/29948 fix commits; inducing so far=30851
+SZZ processed 17700/29948 fix commits; inducing so far=30979
+SZZ processed 17800/29948 fix commits; inducing so far=31107
+SZZ processed 17900/29948 fix commits; inducing so far=31253
+SZZ processed 18000/29948 fix commits; inducing so far=31369
+SZZ processed 18100/29948 fix commits; inducing so far=31526
+SZZ processed 18200/29948 fix commits; inducing so far=31703
+SZZ processed 18300/29948 fix commits; inducing so far=31843
+SZZ processed 18400/29948 fix commits; inducing so far=31931
+SZZ processed 18500/29948 fix commits; inducing so far=32144
+SZZ processed 18600/29948 fix commits; inducing so far=32277
+SZZ processed 18700/29948 fix commits; inducing so far=32393
+SZZ processed 18800/29948 fix commits; inducing so far=32588
+SZZ processed 18900/29948 fix commits; inducing so far=32672
+SZZ processed 19000/29948 fix commits; inducing so far=32829
+SZZ processed 19100/29948 fix commits; inducing so far=33100
+SZZ processed 19200/29948 fix commits; inducing so far=33209
+SZZ processed 19300/29948 fix commits; inducing so far=33318
+SZZ processed 19400/29948 fix commits; inducing so far=33471
+SZZ processed 19500/29948 fix commits; inducing so far=33615
+SZZ processed 19600/29948 fix commits; inducing so far=33778
+SZZ processed 19700/29948 fix commits; inducing so far=33914
+SZZ processed 19800/29948 fix commits; inducing so far=34012
+SZZ processed 19900/29948 fix commits; inducing so far=34155
+SZZ processed 20000/29948 fix commits; inducing so far=34324
+SZZ processed 20100/29948 fix commits; inducing so far=34453
+SZZ processed 20200/29948 fix commits; inducing so far=34623
+SZZ processed 20300/29948 fix commits; inducing so far=34839
+SZZ processed 20400/29948 fix commits; inducing so far=34949
+SZZ processed 20500/29948 fix commits; inducing so far=35070
+SZZ processed 20600/29948 fix commits; inducing so far=35201
+SZZ processed 20700/29948 fix commits; inducing so far=35334
+SZZ processed 20800/29948 fix commits; inducing so far=35430
+SZZ processed 20900/29948 fix commits; inducing so far=35685
+SZZ processed 21000/29948 fix commits; inducing so far=35768
+SZZ processed 21100/29948 fix commits; inducing so far=35948
+SZZ processed 21200/29948 fix commits; inducing so far=36063
+SZZ processed 21300/29948 fix commits; inducing so far=36299
+SZZ processed 21400/29948 fix commits; inducing so far=36413
+SZZ processed 21500/29948 fix commits; inducing so far=36543
+SZZ processed 21600/29948 fix commits; inducing so far=36680
+SZZ processed 21700/29948 fix commits; inducing so far=36797
+SZZ processed 21800/29948 fix commits; inducing so far=36926
+SZZ processed 21900/29948 fix commits; inducing so far=37028
+SZZ processed 22000/29948 fix commits; inducing so far=37231
+SZZ processed 22100/29948 fix commits; inducing so far=37359
+SZZ processed 22200/29948 fix commits; inducing so far=37545
+SZZ processed 22300/29948 fix commits; inducing so far=37627
+SZZ processed 22400/29948 fix commits; inducing so far=37744
+SZZ processed 22500/29948 fix commits; inducing so far=37901
+SZZ processed 22600/29948 fix commits; inducing so far=38062
+SZZ processed 22700/29948 fix commits; inducing so far=38195
+SZZ processed 22800/29948 fix commits; inducing so far=38437
+SZZ processed 22900/29948 fix commits; inducing so far=38568
+SZZ processed 23000/29948 fix commits; inducing so far=38741
+SZZ processed 23100/29948 fix commits; inducing so far=38934
+SZZ processed 23200/29948 fix commits; inducing so far=39079
+SZZ processed 23300/29948 fix commits; inducing so far=39172
+SZZ processed 23400/29948 fix commits; inducing so far=39285
+SZZ processed 23500/29948 fix commits; inducing so far=39406
+SZZ processed 23600/29948 fix commits; inducing so far=39510
+SZZ processed 23700/29948 fix commits; inducing so far=39599
+SZZ processed 23800/29948 fix commits; inducing so far=39798
+SZZ processed 23900/29948 fix commits; inducing so far=39927
+SZZ processed 24000/29948 fix commits; inducing so far=40078
+SZZ processed 24100/29948 fix commits; inducing so far=40171
+SZZ processed 24200/29948 fix commits; inducing so far=40411
+SZZ processed 24300/29948 fix commits; inducing so far=40517
+SZZ processed 24400/29948 fix commits; inducing so far=40680
+SZZ processed 24500/29948 fix commits; inducing so far=40771
+SZZ processed 24600/29948 fix commits; inducing so far=40880
+SZZ processed 24700/29948 fix commits; inducing so far=41032
+SZZ processed 24800/29948 fix commits; inducing so far=41203
+SZZ processed 24900/29948 fix commits; inducing so far=41380
+SZZ processed 25000/29948 fix commits; inducing so far=41505
+SZZ processed 25100/29948 fix commits; inducing so far=41652
+SZZ processed 25200/29948 fix commits; inducing so far=41762
+SZZ processed 25300/29948 fix commits; inducing so far=41875
+SZZ processed 25400/29948 fix commits; inducing so far=42008
+SZZ processed 25500/29948 fix commits; inducing so far=42166
+SZZ processed 25600/29948 fix commits; inducing so far=42288
+SZZ processed 25700/29948 fix commits; inducing so far=42396
+SZZ processed 25800/29948 fix commits; inducing so far=42556
+SZZ processed 25900/29948 fix commits; inducing so far=42738
+SZZ processed 26000/29948 fix commits; inducing so far=42857
+SZZ processed 26100/29948 fix commits; inducing so far=42966
+SZZ processed 26200/29948 fix commits; inducing so far=43057
+SZZ processed 26300/29948 fix commits; inducing so far=43200
+SZZ processed 26400/29948 fix commits; inducing so far=43305
+SZZ processed 26500/29948 fix commits; inducing so far=43398
+SZZ processed 26600/29948 fix commits; inducing so far=43499
+SZZ processed 26700/29948 fix commits; inducing so far=43584
+SZZ processed 26800/29948 fix commits; inducing so far=43684
+SZZ processed 26900/29948 fix commits; inducing so far=43840
+SZZ processed 27000/29948 fix commits; inducing so far=43974
+SZZ processed 27100/29948 fix commits; inducing so far=44107
+SZZ processed 27200/29948 fix commits; inducing so far=44254
+SZZ processed 27300/29948 fix commits; inducing so far=44333
+SZZ processed 27400/29948 fix commits; inducing so far=44579
+SZZ processed 27500/29948 fix commits; inducing so far=44673
+SZZ processed 27600/29948 fix commits; inducing so far=44814
+SZZ processed 27700/29948 fix commits; inducing so far=44909
+SZZ processed 27800/29948 fix commits; inducing so far=45020
+SZZ processed 27900/29948 fix commits; inducing so far=45156
+SZZ processed 28000/29948 fix commits; inducing so far=45271
+SZZ processed 28100/29948 fix commits; inducing so far=45434
+SZZ processed 28200/29948 fix commits; inducing so far=45527
+SZZ processed 28300/29948 fix commits; inducing so far=45595
+SZZ processed 28400/29948 fix commits; inducing so far=45783
+SZZ processed 28500/29948 fix commits; inducing so far=45945
+SZZ processed 28600/29948 fix commits; inducing so far=46007
+SZZ processed 28700/29948 fix commits; inducing so far=46148
+SZZ processed 28800/29948 fix commits; inducing so far=46283
+SZZ processed 28900/29948 fix commits; inducing so far=46439
+SZZ processed 29000/29948 fix commits; inducing so far=46580
+SZZ processed 29100/29948 fix commits; inducing so far=46697
+SZZ processed 29200/29948 fix commits; inducing so far=46892
+SZZ processed 29300/29948 fix commits; inducing so far=47043
+SZZ processed 29400/29948 fix commits; inducing so far=47133
+SZZ processed 29500/29948 fix commits; inducing so far=47245
+SZZ processed 29600/29948 fix commits; inducing so far=47356
+SZZ processed 29700/29948 fix commits; inducing so far=47433
+SZZ processed 29800/29948 fix commits; inducing so far=47573
+SZZ processed 29900/29948 fix commits; inducing so far=47652
+SZZ processed 29948/29948 fix commits; inducing so far=47721
+Identified 47721 inducing commits
+Wrote labeled dataset to: /home/roman/834-group1/artifacts/final_dataset.csv
+Wrote SZZ report to: /home/roman/834-group1/artifacts/szz_report.json
+--- scripts.run_szz return code: 0, took 12:22:52 ---
+
+=== Running scripts.build_datasets ===
+
+[ff_human] window=human, tiers=['-']: 37895 of 38091 commits kept (196 excluded by tier), by tier {'-': 37895}
+  not in a product dataset: 91 with no Bugzilla bug, 5503 in other products
+  ff_human.csv                         (all)                        37895 commits   7638 defective (20.2%)
+  ff_human_core.csv                    Core                         18672 commits   3499 defective (18.7%)
+  ff_human_firefox.csv                 Firefox                       5569 commits   1484 defective (26.6%)
+  ff_human_firefox_for_android.csv     Firefox for Android           4058 commits    951 defective (23.4%)
+  ff_human_toolkit.csv                 Toolkit                       2652 commits    449 defective (16.9%)
+  ff_human_devtools.csv                DevTools                      1350 commits    212 defective (15.7%)
+
+[ff_ai] window=ai, tiers=['A', 'B', 'C']: 3071 of 46662 commits kept (43591 excluded by tier), by tier {'A': 16, 'B': 40, 'C': 3015}
+  not in a product dataset: 123 with no Bugzilla bug, 211 in other products
+  ff_ai.csv                            (all)                         3071 commits    234 defective (7.6%)
+  ff_ai_core.csv                       Core                          1707 commits    111 defective (6.5%)
+  ff_ai_firefox_build_system.csv       Firefox Build System           518 commits     35 defective (6.8%)
+  ff_ai_firefox.csv                    Firefox                        256 commits     35 defective (13.7%)
+  ff_ai_release_engineering.csv        Release Engineering            147 commits     14 defective (9.5%)
+  ff_ai_toolkit.csv                    Toolkit                        109 commits     17 defective (15.6%)
+
+Wrote 12 datasets to /home/roman/834-group1/input, summary in /home/roman/834-group1/artifacts/datasets_summary.csv
+--- scripts.build_datasets return code: 0, took 0:00:01 ---
+Skipping scripts.run_experiments, --skip-experiments given
+
+Stage timings:
+  scripts.firefoxExtract                         0:00:14
+  scripts.cache_numstat                          0:00:04
+  scripts.filterCommits                          0:00:05
+  scripts.getBugzillaList                        0:08:24
+  scripts.AIDetectionScripts.CommitsAIDetect     0:00:06
+  scripts.AIDetectionScripts.merge_labels        0:00:00
+  scripts.AIDetectionScripts.tag_exposure        0:00:01
+  scripts.extract_features                       0:22:26
+  scripts.run_szz                                12:22:52
+  scripts.build_datasets                         0:00:01
+  scripts.run_experiments                        skipped
+  total                                          12:54:12
+
+Pipeline complete.

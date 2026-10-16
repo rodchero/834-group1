@@ -1,0 +1,44 @@
+{
+  "raw_commits": 974803,
+  "windows": {
+    "human": {
+      "since": "2024-11-01",
+      "until": "2025-11-01",
+      "in_window": 53282,
+      "removed": {
+        "wpt import": 6897,
+        "backout": 3468,
+        "third-party": 2402,
+        "vendored only": 460,
+        "no bug ID": 1964
+      },
+      "kept": 38091
+    },
+    "ai": {
+      "since": "2025-11-01",
+      "until": "2026-10-01",
+      "in_window": 64901,
+      "removed": {
+        "wpt import": 7893,
+        "backout": 4573,
+        "third-party": 3455,
+        "vendored only": 389,
+        "no bug ID": 1929
+      },
+      "kept": 46662
+    }
+  },
+  "fix_candidates": {
+    "since": "2024-11-01",
+    "until": "REPO_REF",
+    "in_range": 120058,
+    "removed": {
+      "wpt import": 15183,
+      "backout": 8133,
+      "third-party": 6013,
+      "vendored only": 855,
+      "no bug ID": 3939
+    },
+    "kept": 85935
+  }
+}
