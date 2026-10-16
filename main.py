@@ -11,6 +11,7 @@ from config import (
 )
 
 PYTHON = sys.executable
+EXPERIMENT_STAGE = "scripts.run_experiments"
 
 # (module, outputs). Stages run in order; each depends on the ones before it.
 # A stage is skipped when all of its outputs already exist. outputs=None means
@@ -26,7 +27,7 @@ STAGES = [
     ("scripts.extract_features", [FEATURES]),
     ("scripts.run_szz", [FINAL_DATASET, SZZ_REPORT]),
     ("scripts.build_datasets", None),
-    ("scripts.run_experiments", list(R_RESULTS.values())),
+    (EXPERIMENT_STAGE, list(R_RESULTS.values())),
 ]
 
 
@@ -55,11 +56,18 @@ def run(module):
 
 
 def main():
+    # --skip-experiments: build the datasets only, for machines without R/Perl.
+    # Run the R stage later with `python -m scripts.run_experiments`.
+    skip_experiments = "--skip-experiments" in sys.argv[1:]
+
     timings = []
     pipeline_start = time.perf_counter()
 
     for module, outputs in STAGES:
-        if outputs is not None and all(p.exists() for p in outputs):
+        if module == EXPERIMENT_STAGE and skip_experiments:
+            print(f"Skipping {module}, --skip-experiments given", flush=True)
+            timings.append((module, None))
+        elif outputs is not None and all(p.exists() for p in outputs):
             print(f"Skipping {module}, outputs exist", flush=True)
             timings.append((module, None))
         else:

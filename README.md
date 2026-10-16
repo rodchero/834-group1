@@ -48,7 +48,7 @@ Replication of Kamei et al., "A Large-Scale Empirical Study of Just-in-Time Qual
 python main.py 2>&1 | tee artifacts/run_log.txt
 ```
 
-On a remote machine, run it inside `tmux` or `screen` so it survives a dropped SSH connection. The log is tracked, so the counts it prints (κ, AI tiers, stage timings) are kept with the reports.
+On a remote machine, run it inside `tmux` or `screen` so it survives a dropped SSH connection. On a machine without R or Perl, add `--skip-experiments` to build the datasets only, then run the last stage elsewhere with `python -m scripts.run_experiments`. The log is tracked, so the counts it prints (κ, AI tiers, stage timings) are kept with the reports.
 
 Stages run in order. A stage is skipped when all of its outputs already exist in `artifacts/`, so delete an artifact to regenerate it and everything that depends on it. The numstat cache, label merge, exposure and dataset build stages always run (they are incremental or cheap). Each stage's runtime is printed, with a summary at the end. The Bugzilla stage takes a while, because requests are throttled on purpose.
 
