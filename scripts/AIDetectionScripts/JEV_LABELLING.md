@@ -5,6 +5,9 @@ candidates in `labelling_todo.csv` as a separate rater. It made one `system_one`
 commit with a single Choice question. Every call used the same instructions and labels; only
 the state changed. No human labels were sent.
 
+Jev's labels are in `labelling_sheet_JEV_batch2.csv` (rater `JEV`), so `merge_labels.py`
+picks them up with the human sheets.
+
 ### Instructions provided
 
 > "A keyword search flagged this Firefox commit because its message mentions something that might indicate AI use. Decide whether the commit message says an AI tool was involved in WRITING THIS CHANGE. What matters is who wrote the code, not what the code is about. A Co-authored-by line naming an AI agent (e.g. 'Co-authored-by: Claude <noreply@anthropic.com>') is disclosure. 'Used Claude to review this patch' is borderline; 'Claude wrote the test cases' is disclosed: if the message says the tool produced code that landed, it is disclosed. Reviewer tags like 'r=name' name human reviewers, not authors."
