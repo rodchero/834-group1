@@ -24,6 +24,7 @@ firefox
 /output/*
 !/output/results_*.csv
 !/output/logs/
+!/output/claude_experiment_analysis.md
 
 # Other
 /data/
