@@ -150,11 +150,9 @@ def load_bugs(path):
 
 
 def extract_bug_ids(commit):
-    text = " ".join([
-        commit.get("subject", "") or "",
-        commit.get("message", "") or "",
-    ])
-    return [int(m.group(1)) for m in BUG_RE.finditer(text)]
+    # Subject only, as in run_szz.py: the body often mentions other bugs
+    # ("regressed by bug X") that this commit does not fix.
+    return [int(m.group(1)) for m in BUG_RE.finditer(commit.get("subject", "") or "")]
 
 
 def bug_is_meta(bug):

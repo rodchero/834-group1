@@ -55,6 +55,8 @@ def main():
         commits = [json.loads(line) for line in f if line.strip()]
     for c in commits:
         c["_dt"] = parse_date(c["commit_date"])
+        # Lowercased, as in extract_features.py, so case variants are one developer
+        c["author_email"] = (c.get("author_email") or "").strip().lower()
     commits.sort(key=lambda c: c["_dt"])
 
     # Earliest seed commit per developer, across both windows
