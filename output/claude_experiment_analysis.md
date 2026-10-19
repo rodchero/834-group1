@@ -57,51 +57,87 @@ The top-5 products differ between datasets (assignment: "most commits in each da
 
 RQ3 odds ratios also match Table 6 within sampling noise (NF 3.92 vs 4.29, FIX 2.11 vs 2.07, AGE 0.86 vs 0.85, NUC/NF 2.68 vs 3.20, EXP 0.88 vs 0.92).
 
-## 3. RQ1 – prediction performance (`results_pred.csv`)
-| Dataset | Acc | Prec | Recall | F1 | AUC |
-|---|---|---|---|---|---|
-| mozilla_original | .764 | .134 | .639 | .221 | .774 |
-| ff_human | .642 | .308 | .627 | .413 | .683 |
-| ff_human_core | .639 | .284 | .605 | .386 | .671 |
-| ff_human_devtools | .664 | .266 | .656 | .376 | .703 |
-| ff_human_firefox | .607 | .362 | .623 | .458 | .658 |
-| ff_human_firefox_for_android | .651 | .367 | .678 | .475 | .714 |
-| ff_human_toolkit | .623 | .247 | .601 | .349 | .651 |
-| ff_ai | .623 | .113 | .577 | .188 | .646 |
-| ff_ai_core | .626 | .089 | .523 | .151 | .626 |
-| ff_ai_firefox | .688 | .247 | .658 | .352 | .679 |
-| ff_ai_firefox_build_system* | .735 | .462 | .317 | NaN (≈.37) | .556 |
-| ff_ai_release_engineering* | .466 | .124 | .625 | NaN (≈.21) | .542 |
-| ff_ai_toolkit* | .523 | .193 | .550 | NaN (≈.29) | .532 |
+## 3. RQ1 – prediction performance and comparison with the original study
 
-\* Unreliable (14–35 defective commits). F1 is NaN because some folds had precision = recall = 0 and the package averages per-fold F1; the value in brackets is F1 of the averaged precision and recall.
+RQ1 asks whether the change metrics in the JIT prediction model still distinguish defect-inducing changes when applied to modern Firefox commits, and whether performance differs between the modern human and AI-exposed cohorts. The original Mozilla dataset is included as a replication control. It contains 98,275 commits, of which 5,149 (5.2%) are labelled defective. The modern human cohort contains 37,895 commits, with 7,638 defective (20.2%); the AI-exposed cohort contains 3,071 commits, with 234 defective (7.6%). These base-rate differences matter: precision is affected by how common defects are, so it should not be interpreted as a measure of discrimination by itself.
 
-Observations:
-- **Human models perform close to the paper's open-source average** (paper: acc 71%, prec 37%, recall 67%, F1 45%, AUC 76%). Recall is stable at ~0.60–0.68 everywhere, as in the paper. Precision is much higher than Mozilla's (.31 vs .13), consistent with the paper's note that precision tracks the defect rate (20% vs 5%). AUC is somewhat lower than Mozilla (.68 vs .77).
-- **AI models predict worse**: general AUC .65 (vs .68 human), precision .11 (expected at a 7.6% defect rate). AI Core is the weakest (AUC .63, F1 .15). AI Firefox (AUC .68) is comparable to the human models but rests on 35 defective commits.
-- The three smallest AI product models are near random (AUC .53–.56) and should be reported as attempted but not interpretable.
+### Reproduction control
 
-## 4. RQ2 – effort-aware prediction (`results_pred_effort.csv`)
-| Dataset | LR@20% | LR Popt | EALR@20% | EALR Popt |
-|---|---|---|---|---|
-| mozilla_original | .061 | .382 | .144 | .453 |
-| ff_human | .007 | .170 | .702 | .860 |
-| ff_human_core | .012 | .144 | .738 | .872 |
-| ff_human_devtools | .115 | .316 | .487 | .714 |
-| ff_human_firefox | .043 | .285 | .526 | .779 |
-| ff_human_firefox_for_android | .054 | .326 | .425 | .717 |
-| ff_human_toolkit | .010 | .166 | .665 | .819 |
-| ff_ai | .043 | .280 | .512 | .731 |
-| ff_ai_core | .166 | .331 | .546 | .768 |
-| ff_ai_firefox | .058 | .513 | .208 | .543 |
-| ff_ai_firefox_build_system* | .240 | .567 | .220 | .538 |
-| ff_ai_release_engineering* | NaN | NaN | NaN | NaN |
-| ff_ai_toolkit* | NaN | NaN | NaN | NaN |
+The original Mozilla results are reproduced closely. The paper reports approximately 0.77 accuracy, 0.13 precision, 0.63 recall, 0.22 F1, and 0.77 AUC for its Mozilla dataset. This run reports 0.764, 0.134, 0.639, 0.221, and 0.774. This agreement is evidence that the replication package and the configured experiment can recover the original Mozilla result; it does not establish that any difference between Mozilla and modern Firefox is caused by a particular tooling change.
 
-Observations:
-- **The paper's qualitative RQ2 finding holds**: plain LR ranking is poor at 20% effort (human .007–.115, below the random baseline of .20), and EALR is far better.
-- **EALR numbers are much higher than in the paper** (human 70% of defects at 20% effort vs 15% for Mozilla, 35% paper average). This is not a modelling artefact but a property of Firefox change sizes: churn is extremely concentrated (top 1% of commits hold 62% of churn in ff_human, 66% in ff_ai, vs 41% in mozilla_original). A trivial "smallest change first" ordering already reaches 87% of defects at 20% effort in ff_human (80% ff_ai, 60% mozilla_original). The report should present EALR relative to this baseline: EALR does not beat smallest-first on Firefox, so the effort-aware gains mostly come from effort concentration.
-- AI vs human: EALR@20% .51 (AI) vs .70 (human), Popt .73 vs .86 — effort-aware ranking is less effective on AI commits.
+### Results
+
+| Dataset | Commits | Defective | Defect rate | Accuracy | Precision | Recall | F1 | AUC |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| Paper Mozilla (reported, approximate) | 98,275 | 5,149 | 5.2% | .77 | .13 | .63 | .22 | .77 |
+| Mozilla original (this run) | 98,275 | 5,149 | 5.2% | .764 | .134 | .639 | .221 | .774 |
+| Firefox human, all products | 37,895 | 7,638 | 20.2% | .642 | .308 | .627 | .413 | .683 |
+| Firefox human, Core | 18,672 | 3,499 | 18.7% | .639 | .284 | .605 | .386 | .671 |
+| Firefox human, DevTools | 1,350 | 212 | 15.7% | .664 | .266 | .656 | .376 | .703 |
+| Firefox human, Firefox desktop | 5,569 | 1,484 | 26.6% | .607 | .362 | .623 | .458 | .658 |
+| Firefox human, Firefox for Android | 4,058 | 951 | 23.4% | .651 | .367 | .678 | .475 | .714 |
+| Firefox human, Toolkit | 2,652 | 449 | 16.9% | .623 | .247 | .601 | .349 | .651 |
+| Firefox AI-exposed, all products | 3,071 | 234 | 7.6% | .623 | .113 | .577 | .188 | .646 |
+| Firefox AI-exposed, Core | 1,707 | 111 | 6.5% | .626 | .089 | .523 | .151 | .626 |
+| Firefox AI-exposed, Firefox desktop | 256 | 35 | 13.7% | .688 | .247 | .658 | .352 | .679 |
+| Firefox AI-exposed, Firefox Build System* | 518 | 35 | 6.8% | .735 | .462 | .317 | not stable | .556 |
+| Firefox AI-exposed, Release Engineering* | 147 | 14 | 9.5% | .466 | .124 | .625 | not stable | .542 |
+| Firefox AI-exposed, Toolkit* | 109 | 17 | 15.6% | .523 | .193 | .550 | not stable | .532 |
+
+The three starred AI product datasets have only 14–35 defective commits. Their metrics are unstable and should not be used to make product-level claims. F1 is NaN in the saved results because the package averages fold-level F1 values and some folds have undefined/zero precision-recall combinations; an F1 calculated from the averaged precision and recall would be a different summary and is not substituted here.
+
+### Interpretation and relation to the hypothesis
+
+The modern human model retains substantial discrimination: its AUC is .683 versus .774 on the original Mozilla data, while recall is .627 versus .639. Thus the model continues to identify a similar fraction of labelled defective commits at the chosen threshold, but ranks defective commits less well overall by AUC. Human Firefox precision is higher (.308 versus .134), but its defect rate is also much higher (20.2% versus 5.2%). This precision difference is therefore not evidence that the modern model is intrinsically more accurate; it is consistent with a larger positive class.
+
+For the AI-exposed cohort, the all-products model has lower AUC (.646) and recall (.577) than the modern human model (.683 and .627). Precision is .113, compared with .308 for human Firefox. The AI cohort is also much smaller and has a lower observed defect rate. In addition, it covers a later period and has less time for defects to be discovered and linked by SZZ before the 2026-10-08 snapshot. These factors are confounded in the current comparison; the results do not isolate an effect of AI assistance.
+
+The operational-velocity explanation is not tested by these RQ1 metrics. The daily-volume analysis reports 105.6 human commits per active day on average (median 123, p95 204, maximum 251) and 12.2 AI-exposed commits per active day (median 9, p95 34, maximum 94). These are cohort commit counts, not model false alarms. The replication files contain neither saved per-commit false-positive predictions nor PR/MR identifiers, and they do not provide comparable original-study daily false-alarm counts normalized for team size. Therefore, the claims of 30 versus 2 false alarms per day, and the hypothesis that PR-level aggregation would remove excess noise, cannot be evaluated from this package.
+
+**RQ1 conclusion.** The original Mozilla result is reproduced, and modern human Firefox retains comparable recall but lower AUC. AI-exposed Firefox has weaker aggregate prediction metrics than modern human Firefox, but cohort size, base rate, time-at-risk, product mix, and AI exposure differ. These results motivate a PR-level and fixed-time-at-risk follow-up; they do not establish that modern delivery velocity caused false alarms or that the original prediction theory has failed.
+
+## 4. RQ2 – effort-aware prediction and comparison with the original study
+
+RQ2 evaluates how many labelled defects are found when inspection is limited to a fixed fraction of change effort. In this replication, effort is derived from estimated changed lines using the `la`, `ld`, `lt`, and `nf` metrics. The reported `@20%` value is the fraction of all labelled defects encountered by the point at which the ranked inspection order has consumed approximately 20% of total estimated effort. It is not a false-alarm rate, a daily count, or a claim that 20% of commits were inspected. `Popt` summarizes the effort-aware curve relative to optimal and worst orderings; larger values indicate a better ordering under the package's definition.
+
+The table distinguishes ordinary logistic-regression ranking (`LR`) from the effort-aware linear-regression method (`EALR`). They are not interchangeable: a statement about “the model” must identify which ranking it refers to.
+
+### Results
+
+| Dataset | Commits | Defective | LR defects found at 20% effort | LR Popt | EALR defects found at 20% effort | EALR Popt |
+|---|---:|---:|---:|---:|---:|---:|
+| Paper Mozilla (reported, approximate) | 98,275 | 5,149 | 6% | .38 | 15% | .45 |
+| Mozilla original (this run) | 98,275 | 5,149 | 6.1% | .382 | 14.4% | .453 |
+| Firefox human, all products | 37,895 | 7,638 | 0.7% | .170 | 70.2% | .860 |
+| Firefox human, Core | 18,672 | 3,499 | 1.2% | .144 | 73.8% | .872 |
+| Firefox human, DevTools | 1,350 | 212 | 11.5% | .316 | 48.7% | .714 |
+| Firefox human, Firefox desktop | 5,569 | 1,484 | 4.3% | .285 | 52.6% | .779 |
+| Firefox human, Firefox for Android | 4,058 | 951 | 5.4% | .326 | 42.5% | .717 |
+| Firefox human, Toolkit | 2,652 | 449 | 1.0% | .166 | 66.5% | .819 |
+| Firefox AI-exposed, all products | 3,071 | 234 | 4.3% | .280 | 51.2% | .731 |
+| Firefox AI-exposed, Core | 1,707 | 111 | 16.6% | .331 | 54.6% | .768 |
+| Firefox AI-exposed, Firefox desktop | 256 | 35 | 5.8% | .513 | 20.8% | .543 |
+| Firefox AI-exposed, Firefox Build System* | 518 | 35 | 24.0% | .567 | 22.0% | .538 |
+| Firefox AI-exposed, Release Engineering* | 147 | 14 | not estimable | not estimable | not estimable | not estimable |
+| Firefox AI-exposed, Toolkit* | 109 | 17 | not estimable | not estimable | not estimable | not estimable |
+
+The Release Engineering and Toolkit AI datasets each exceed the runner's 10-defect skip threshold, but their saved metrics are NaN. They were not skipped by that threshold; the NaN results are undefined in the saved output, and their precise cause should be checked in the per-dataset R logs before assigning an explanation. The Build System and AI desktop Firefox datasets each have only 35 defective commits, so their estimates are highly uncertain and should be treated as exploratory.
+
+### Interpreting model ranking and the smallest-first control
+
+The 2013 Mozilla result shows that effort-aware ranking improves over ordinary LR: at 20% effort the original study reports about 6% of defects for LR and 15% for EALR; this replication obtains 6.1% and 14.4%. Modern Firefox shows the same direction for the all-product datasets: EALR exceeds ordinary LR, reaching 70.2% versus 0.7% on human Firefox and 51.2% versus 4.3% on AI-exposed Firefox. The human product-level EALR values range from 42.5% to 73.8%; AI product results vary widely and most are based on small defective samples.
+
+However, the modern EALR result is not enough to conclude that a complex model is the best review policy. A separate smallest-first ordering based directly on measured commit churn finds approximately 87.0% of human Firefox defects and 80.3% of AI-exposed Firefox defects at around 20% of effort. For human Firefox, smallest-first exceeds the saved EALR result (87.0% versus 70.2%). This means the complex effort-aware model improves greatly over ordinary LR but does not beat the size-only control in this cohort. It is therefore inaccurate to say simply that “the old model flags massive files and catches almost no bugs”: ordinary LR performs poorly at 20% effort, but EALR finds 70.2% of human Firefox defects.
+
+The evidence also indicates concentrated churn: the top 1% of human Firefox commits account for 62.5% of added-plus-deleted lines in the numstat data; the top 1% of AI-exposed commits account for 66.2%. When administrative paths are excluded from churn but the same human commits are retained, top-1% concentration falls to 55.3%. When every human commit touching an identified administrative path is removed, it falls to 51.5%; that stricter sensitivity removes 2,672 commits (7.1% of the human cohort). These checks show that the selected path filters affect concentration, but they do not reproduce the proposed 42% value. Nor do they prove the changes were made by bots: the replication CSVs omit author and committer identities, and mixed commits can contain both administrative and product changes.
+
+For the current Firefox human and AI cohorts, the smallest-first baseline is thus a useful benchmark and performs strongly. The available stored model results do not include a fitted EALR result for the admin-path-filtered dataset, so the hypothesis that bot filtering restores predictive dominance to a complex model remains untested. The paper-era smallest-first baseline is also not included in the current output tables; do not claim a direct controlled 2013-versus-modern comparison for that heuristic unless it is recomputed using the same procedure on `mozilla_original`.
+
+### What the 20% comparison does and does not mean
+
+The 20% budget is a normalized share of estimated code churn, not a fixed number of review hours. A project with more engineers or different review tooling may tolerate more alerts, but those organizational costs are not measured here. The current data also do not identify the false-positive commits in the 20% ranking, so they cannot show whether wasted effort was spent on tiny or massive false positives. The `Popt` and defects-at-20% figures summarize ordering over labelled commits; they do not measure team capacity, review duration, interruption cost, or defect severity.
+
+**RQ2 conclusion.** Effort-aware EALR substantially outperforms ordinary LR in the modern all-product cohorts, but the simple smallest-first control performs better than EALR on the current human cohort. Modern churn is concentrated, and path-based exclusions reduce but do not eliminate that concentration. The evidence supports reporting effort distributions and naive baselines alongside model scores. It does not establish that automated bots are the cause, that large changes have lower defect density, or that PR-level evaluation would solve the issue. To test those claims, retrieve author identities and PR/MR grouping, remove or reweight administrative work at file level, then rerun both model rankings and the same effort-baseline evaluation on the adjusted cohort.
 
 ## 5. RQ3 – characteristics of defect-inducing changes (`results_factor*.csv`)
 Odds ratios of the logistic models fitted on the whole (undersampled) dataset; blank = removed by correlation/VIF filtering or BIC stepwise selection. pd = AGE, npt = NUC/NF.
